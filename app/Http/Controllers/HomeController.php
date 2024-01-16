@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Models\Attendance;
+use App\Models\Employee;
+use App\Models\Hour;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -21,6 +27,13 @@ class HomeController extends Controller
 
     public function dashboard(Request $request)
     {
-        return view('dashboard');
+
+        $targatedDate = now()->toDateString();
+        return view('dashboard',['targatedDate'=>$targatedDate]);
     }
+
+
+
+
+
 }

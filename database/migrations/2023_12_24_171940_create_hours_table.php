@@ -16,9 +16,9 @@ return new class extends Migration
             // employee
             $table->unsignedBigInteger('employee_id');
             $table->foreign('employee_id')->references('id')->on('employees')-> onDelete('cascade');
-            $table->time('in_time');
-            $table->time('out_time')->nullable();
-            $table->integer('wh_time')->default(0);
+            $table->timestamp('in_time');
+            $table->timestamp('out_time')->nullable();
+            $table->time('wh_time')->default('00:00:00');
             $table->timestamps();
         });
     }

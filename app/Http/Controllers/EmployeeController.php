@@ -41,9 +41,7 @@ class EmployeeController extends Controller
         // return $employees = Employee::all();
 
         if ($request->ajax()) {
-            return DataTables::of(Employee::orderBy('id', 'desc')
-        )
-                ->make(true);
+            return DataTables::of(Employee::orderBy('id', 'desc'))->make(true);
         }
         return view('employees.index');
     }
@@ -72,6 +70,7 @@ class EmployeeController extends Controller
     // : RedirectResponse
     public function store(StoreEmployeeRequest $request)
     {
+
         $employee = Employee::create([
             'name' => $request->name,
             'phone' => $request->phone,
@@ -80,6 +79,7 @@ class EmployeeController extends Controller
             'emp_number' => $request->emp_number,
             'wh' => $request->wh,
             'score' => $request->score,
+            'score_note' => $request->score_note,
         ]);
         return redirect()->route('employees.index')->with(['status' => 200, 'message' => 'Employee Created!']);
 
@@ -134,6 +134,7 @@ class EmployeeController extends Controller
         $employee->emp_number = $request->emp_number;
         $employee->wh = $request->wh;
         $employee->score = $request->score;
+        $employee->score_note = $request->score_note;
 
         $employee->update();
 

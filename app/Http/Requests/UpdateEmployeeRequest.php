@@ -29,6 +29,7 @@ class UpdateEmployeeRequest extends FormRequest
             'emp_number' => 'nullable|string',
             'wh' => 'nullable|string',
             'score' => 'nullable|string',
+            'score_note' => 'nullable|string',
         ];
     }
 }

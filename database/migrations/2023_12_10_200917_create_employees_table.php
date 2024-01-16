@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('emp_number')->unique();
             $table->integer('wh');
             $table->integer('score')->default(0);
+            $table->longText('score_note')->nullable();
             $table->timestamps();
         });
     }

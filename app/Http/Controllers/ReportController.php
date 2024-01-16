@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Attendance;
 use App\Models\Employee;
+use App\Models\Hour;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
@@ -17,22 +18,29 @@ class ReportController extends Controller
      */
     public function daily(Request $request)
     {
-
         if ($request->targatedDay) {
             $targatedDate = $request->targatedDay;
         }else{
             $targatedDate = now()->toDateString();
         }
 
-
-
         if ($request->ajax()) {
 
             return DataTables::of(Employee::query())
             ->addColumn('total_wh_time', function ($employee) use ($targatedDate){
-                return $employee->hours()
-                    ->whereDate('created_at', $targatedDate  )
-                    ->sum('wh_time');
+
+                $totalworkedHour = $employee->hours()
+                ->whereDate('created_at', $targatedDate  )
+                ->sum('wh_time');
+
+                if ($totalworkedHour == 0) {
+                    return '00:00:00';
+                } else {
+                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
+                    $outputString = substr_replace($outputString, ':', -2, 0);
+                    return $outputString ;
+                }
+
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -40,6 +48,33 @@ class ReportController extends Controller
         return view('reports.daily',['targatedDate'=>$targatedDate]);
 
     }
+
+
+    public function present(Request $request)
+    {
+        if ($request->targatedDay) {
+            $targatedDate = $request->targatedDay;
+        }else{
+            $targatedDate = now()->toDateString();
+        }
+
+        if ($request->ajax()) {
+            return DataTables::of(Employee::query())
+            ->addColumn('ads', function ($employee) use ($targatedDate){
+                $scantoday = Hour::where('employee_id',$employee->id)->whereDate('created_at', $targatedDate)->get();
+                if ($scantoday->count() > 0) {
+                    return 1;
+                } else {
+                    return 2 ;
+                }
+            })
+            ->rawColumns(['ads'])
+            ->make(true);
+        }
+        return view('reports.daily',['targatedDate'=>$targatedDate]);
+
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -73,10 +108,19 @@ class ReportController extends Controller
 
             return DataTables::of(Employee::query())
             ->addColumn('total_wh_time', function ($employee) use ($startOfThisWeek,$endOfThisWeek){
-                return $employee->hours()
+                $totalworkedHour = $employee->hours()
                     // ->whereDate('created_at', $targatedDate  )
                     ->whereBetween('created_at', [$startOfThisWeek, $endOfThisWeek])
                     ->sum('wh_time');
+
+
+                if ($totalworkedHour == 0) {
+                    return '00:00:00';
+                } else {
+                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
+                    $outputString = substr_replace($outputString, ':', -2, 0);
+                    return $outputString ;
+                }
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -95,10 +139,19 @@ class ReportController extends Controller
 
             return DataTables::of(Employee::query())
             ->addColumn('total_wh_time', function ($employee) use ($startOfLastWeek,$endOfLastWeek){
-                return $employee->hours()
+                $totalworkedHour = $employee->hours()
                     // ->whereDate('created_at', $targatedDate  )
                     ->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])
                     ->sum('wh_time');
+
+
+                if ($totalworkedHour == 0) {
+                    return '00:00:00';
+                } else {
+                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
+                    $outputString = substr_replace($outputString, ':', -2, 0);
+                    return $outputString ;
+                }
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -122,9 +175,17 @@ class ReportController extends Controller
 
             return DataTables::of(Employee::query())
             ->addColumn('total_wh_time', function ($employee) use ($targatedMonth){
-                return $employee->hours()
+                $totalworkedHour = $employee->hours()
                     ->whereMonth('created_at', $targatedMonth)
                     ->sum('wh_time');
+
+                if ($totalworkedHour == 0) {
+                    return '00:00:00';
+                } else {
+                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
+                    $outputString = substr_replace($outputString, ':', -2, 0);
+                    return $outputString ;
+                }
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -151,9 +212,17 @@ class ReportController extends Controller
 
             return DataTables::of(Employee::query())
             ->addColumn('total_wh_time', function ($employee) use ($targatedYear){
-                return $employee->hours()
+                $totalworkedHour = $employee->hours()
                     ->whereYear('created_at', $targatedYear)
                     ->sum('wh_time');
+
+                    if ($totalworkedHour == 0) {
+                        return '00:00:00';
+                    } else {
+                        $outputString = substr_replace($totalworkedHour, ':', -4, 0);
+                        $outputString = substr_replace($outputString, ':', -2, 0);
+                        return $outputString ;
+                    }
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -177,10 +246,18 @@ class ReportController extends Controller
             }
             return DataTables::of(Employee::query())
             ->addColumn('total_wh_time', function ($employee) use ($startOfThisWeek,$endOfThisWeek){
-                return $employee->hours()
+                $totalworkedHour = $employee->hours()
                     // ->whereDate('created_at', $targatedDate  )
                     ->whereBetween('created_at', [$startOfThisWeek, $endOfThisWeek])
                     ->sum('wh_time');
+
+                    if ($totalworkedHour == 0) {
+                        return '00:00:00';
+                    } else {
+                        $outputString = substr_replace($totalworkedHour, ':', -4, 0);
+                        $outputString = substr_replace($outputString, ':', -2, 0);
+                        return $outputString ;
+                    }
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);

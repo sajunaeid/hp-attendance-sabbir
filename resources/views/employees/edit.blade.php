@@ -36,7 +36,7 @@
 
                         <div>
                             <label for="emp_id" class="block mb-2">Employee ID</label>
-                            <input type="text" class="form-input" id="emp_id" name="emp_id" required value="{{$employee->emp_id }}">
+                            <input type="text" class="form-input" id="emp_id" name="emp_id" required value="{{$employee->emp_id }}" maxlength="9">
                         </div> <!-- end -->
 
                         <div>
@@ -53,6 +53,13 @@
                             <label for="score" class="block mb-2">Score</label>
                             <input type="text" class="form-input" id="score" name="score" required value="{{$employee->score }}">
                         </div> <!-- end -->
+
+                        <div>
+                            <label for="score_note" class="block mb-2">Score Note</label>
+                            <textarea class="form-input" id="score_note" name="score_note" required rows="1">{{$employee->score_note }}</textarea>
+                        </div> <!-- end -->
+
+
                         <div>
                             <p class="mt-auto">All filds are required. Pleaser fill them all before submit/save.</p>
                         </div> <!-- end -->

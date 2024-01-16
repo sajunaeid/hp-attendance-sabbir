@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/monthly', [ReportController::class, 'monthly'])->name('reports.monthly');
         Route::get('/yearly', [ReportController::class, 'yearly'])->name('reports.yearly');
         Route::get('/range', [ReportController::class, 'range'])->name('reports.range');
+        Route::get('/present', [ReportController::class, 'present'])->name('reports.present');
     });
 
     // Route::controller(ReportController::class)->group(function () {

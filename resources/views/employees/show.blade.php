@@ -30,6 +30,8 @@
                         <p class="">Employee Number: <span class="text-seagreen">{{$employee->emp_number ? $employee->emp_number :''}}</span></p>
                         <p class="">Created At: <span class="text-seagreen">{{ date('d-M-Y', strtotime($employee->created_at)); }}</span></p>
                         <p class="">Last Updated At: <span class="text-seagreen">{{$employee->updated_at}}</span></p>
+                        <p class="">Score : <span class="text-seagreen">{{$employee->score}}</span></p>
+                        <p class="">Score Note : <span class="text-seagreen">{{$employee->score_note}}</span></p>
                     </div>
                 </div>
 

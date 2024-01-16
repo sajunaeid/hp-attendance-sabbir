@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id');
             $table->foreign('employee_id')->references('id')->on('employees')-> onDelete('cascade');
             $table->tinyInteger('scan_type')->comment('1 => in, 2 => out');
-            $table->time('scan_time');
+            $table->timestamp('scan_time');
             $table->timestamps();
         });
     }

@@ -5,132 +5,112 @@
         </h2>
     </x-slot>
 
-    <div class="">
-        <!-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
+
+    {{-- Header Style --}}
+    <x-slot name="headerstyle">
+        {{-- Datatable css --}}
+        <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    </x-slot>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2">
+        <div class="flex flex-col gap-6 col-span-2 sm:col-span-1">
+
+            <div class="">
+                <div class="card">
+                    <div class="p-6">
+                        <form action="" method="get" id="dailyreport">
+                            <input type="date" name="targatedDay" id="targatedDay" value="{{ $targatedDate }}" class="dark:text-gray-950">
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="p-6">
+                        <table id="reportTable" class="display stripe text-xs sm:text-base" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Sl</th>
+                                    <th>Name</th>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div> -->
-        <div class="flex flex-col gap-6">
-
-            <div class="grid xl:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-6">
-
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h4 class="card-title">Sales Analytics</h4>
-
-                            <div>
-                                <button data-fc-target="dropdown-target2" data-fc-type="dropdown" type="button" data-fc-placement="bottom-end">
-                                    <i class="mdi mdi-dots-vertical text-xl"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div class="bg-success text-white rounded-full text-xs px-2 py-0.5">32% <i class="mdi mdi-trending-up"></i></div>
-
-                            <div class="text-end">
-                                <h2 class="text-3xl font-normal text-gray-800 dark:text-white mb-1"> 8451 </h2>
-                                <p class="text-gray-400 font-normal">Revenue today</p>
-                            </div>
-
-                        </div>
-
-                        <div class="flex w-full h-[5px] bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700 mt-6">
-                            <div class="flex flex-col justify-center overflow-hidden bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            <div class="flex flex-col justify-center overflow-hidden bg-success/10" role="progressbar" style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </div> <!-- card-end -->
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h4 class="card-title">Sales Analytics</h4>
-
-                            <div>
-                                <button data-fc-target="dropdown-target2" data-fc-type="dropdown" type="button" data-fc-placement="bottom-end">
-                                    <i class="mdi mdi-dots-vertical text-xl"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div class="bg-success text-white rounded-full text-xs px-2 py-0.5">32% <i class="mdi mdi-trending-up"></i></div>
-
-                            <div class="text-end">
-                                <h2 class="text-3xl font-normal text-gray-800 dark:text-white mb-1"> 8451 </h2>
-                                <p class="text-gray-400 font-normal">Revenue today</p>
-                            </div>
-
-                        </div>
-
-                        <div class="flex w-full h-[5px] bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700 mt-6">
-                            <div class="flex flex-col justify-center overflow-hidden bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            <div class="flex flex-col justify-center overflow-hidden bg-success/10" role="progressbar" style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </div> <!-- card-end -->
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h4 class="card-title">Sales Analytics</h4>
-
-                            <div>
-                                <button data-fc-target="dropdown-target2" data-fc-type="dropdown" type="button" data-fc-placement="bottom-end">
-                                    <i class="mdi mdi-dots-vertical text-xl"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div class="bg-success text-white rounded-full text-xs px-2 py-0.5">32% <i class="mdi mdi-trending-up"></i></div>
-
-                            <div class="text-end">
-                                <h2 class="text-3xl font-normal text-gray-800 dark:text-white mb-1"> 8451 </h2>
-                                <p class="text-gray-400 font-normal">Revenue today</p>
-                            </div>
-
-                        </div>
-
-                        <div class="flex w-full h-[5px] bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700 mt-6">
-                            <div class="flex flex-col justify-center overflow-hidden bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            <div class="flex flex-col justify-center overflow-hidden bg-success/10" role="progressbar" style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </div> <!-- card-end -->
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h4 class="card-title">Sales Analytics</h4>
-
-                            <div>
-                                <button data-fc-target="dropdown-target2" data-fc-type="dropdown" type="button" data-fc-placement="bottom-end">
-                                    <i class="mdi mdi-dots-vertical text-xl"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div class="bg-success text-white rounded-full text-xs px-2 py-0.5">32% <i class="mdi mdi-trending-up"></i></div>
-
-                            <div class="text-end">
-                                <h2 class="text-3xl font-normal text-gray-800 dark:text-white mb-1"> 8451 </h2>
-                                <p class="text-gray-400 font-normal">Revenue today</p>
-                            </div>
-
-                        </div>
-
-                        <div class="flex w-full h-[5px] bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700 mt-6">
-                            <div class="flex flex-col justify-center overflow-hidden bg-success" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            <div class="flex flex-col justify-center overflow-hidden bg-success/10" role="progressbar" style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </div> <!-- card-end -->
-            </div> <!-- grid-end -->
 
         </div> <!-- flex-end -->
     </div>
+
+
+
+    <x-slot name="script">
+        <!-- Datatable script-->
+        <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        {{-- <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script> --}}
+        <script>
+            $(document).ready(function () {
+                var datatablelist = null;
+
+                $('#targatedDay').on('change', function () {
+                    datatablelist.draw();
+                });
+
+
+
+                datatablelist = $('#reportTable').DataTable({
+                    dom: 'Bfrtip',
+                    processing: true,
+                    serverSide: true,
+
+                    ajax: {
+                        url: "{!! route('reports.present') !!}",
+                        data: function (d) {
+                            d.targatedDay = $('#targatedDay').val();
+                        },
+                        beforeSend: function() {
+                            // setting a timeout
+                            console.log($('#targatedDay').val());
+                        },
+                    },
+                    pageLength: 100,
+                    columns: [{
+                            "render": function(data, type, full, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
+                        },
+                        {
+                            data: 'name',
+                            name: 'name'
+                        },
+                        {
+                            data: 'emp_id',
+                            name: 'emp_id'
+                        },
+                        {
+                            data: null,
+                            render: function (data) {
+                                if (data.ads == true ){
+                                    var statusLabels = '<span  class="text-green-500 text-sm px-2 inline-block">Present</span>';
+                                }else{
+                                    var statusLabels = '<span  class="text-red-500 text-sm px-2 inline-block">Absent</span>';
+                                }
+                                // console.log(data);
+
+                                return statusLabels;
+                            }
+                        }
+                    ]
+                });
+
+            });
+
+        </script>
+    </x-slot>
 </x-app-layout>

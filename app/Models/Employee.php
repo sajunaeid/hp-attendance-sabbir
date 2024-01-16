@@ -21,7 +21,8 @@ class Employee extends Model
         'emp_id',
         'emp_number',
         'wh',
-        'score'
+        'score',
+        'score_note'
     ];
 
 

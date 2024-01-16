@@ -17,7 +17,7 @@ class EmployeeSeeder extends Seeder
         $faker = Faker::create();
 
 
-        foreach (range(1, 30) as $index) {
+        foreach (range(1, 15) as $index) {
             $user = Employee::create([
                 'name' => $faker->name,
                 'phone' => $faker->e164PhoneNumber ,
@@ -26,6 +26,7 @@ class EmployeeSeeder extends Seeder
                 'emp_number' => $faker->unixTime($max = 'now') ,
                 'wh' => 7,
                 'score'=> $faker->biasedNumberBetween($min = 100, $max = 999, $function = 'sqrt'),
+                'score_note' => $faker->paragraph(10)
             ]);
         }
     }

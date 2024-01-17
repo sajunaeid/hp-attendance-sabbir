@@ -51,7 +51,7 @@
                     <div class=" motion-safe:hover:scale-[1.01] transition-all duration-250">
                         <div class="my-10 text-center space-y-5">
                             <h2 class="text-5xl font-bold text-red-500 ">Welcome!</h2>
-                            <p>Please Scane your ID Before entering or leaving</p>
+                            <p>Please Scan your ID Before entering or leaving</p>
                             <p class="text-red-400">You can only scan after 9 am and before 10pm</p>
                         </div>
                             <h2 class="my-10 text-xl font-bold text-red-500 text-center min-h-18" >Scan Your ID Card</h2>

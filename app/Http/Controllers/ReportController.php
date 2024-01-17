@@ -74,6 +74,8 @@ class ReportController extends Controller
                     return 1;
                 } elseif($hour && $hour->in_time && $hour->out_time) {
                     return 2 ;
+                }else {
+                    return 2;
                 }
             })
             ->rawColumns(['ads','state'])

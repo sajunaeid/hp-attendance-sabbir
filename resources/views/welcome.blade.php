@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Hahnemann Phamacy</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -42,7 +42,7 @@
             <div class="max-w-7xl mx-auto p-6 lg:p-8">
                 <div class="flex justify-center items-center">
                     <img src="{{asset('hp.svg')}}" alt="Hamneman Pharmacy" srcset="" class="h-24">
-                    <h1 class="text-4xl font-bold font-mont text-gray-900">Hahneman <br> Phamacy</h1>
+                    <h1 class="text-4xl font-bold font-mont text-gray-900">Hahnemann <br> Phamacy</h1>
                 </div>
 
                 <div class="mt-16 p-6 flex justify-center items-center mx-auto max-w-2xl">
@@ -52,19 +52,20 @@
                         <div class="my-10 text-center space-y-5">
                             <h2 class="text-5xl font-bold text-red-500 ">Welcome!</h2>
                             <p>Please Scane your ID Before entering or leaving</p>
+                            <p class="text-red-400">You can only scan after 9 am and before 10pm</p>
                         </div>
                             <h2 class="my-10 text-xl font-bold text-red-500 text-center min-h-18" >Scan Your ID Card</h2>
-                            <h2 class="my-24 text-2xl font-bold text-green-500 text-center" id="scanNotification"></h2>
+                            <h2 class="my-24 text-2xl font-bold text-center" id="scanNotification"></h2>
                     </div>
                 </div>
 
 
-                <div class="mt-2 opacity-0">
+                <div class="mt-2 0opacity-0">
                     <div class="flex justify-center items-center mx-auto max-w-2xl p-6">
                         <form action="{{route('attendences.store')}}" method="post" id="idCardScanForm">
                             @csrf
                             <input type="text" name="emp_number" id="emp_number_input" autofocus >
-                            <div class="lg:col-span-2 mt-3">
+                            <div class="lg:col-span-2 mt-3 hidden">
                                 <button type="submit"
                                     class="font-mont mt-8 px-10 py-4 bg-black text-white font-semibold text-xs uppercase tracking-widest transition ease-in-out duration-150 relative after:absolute after:content-['SURE!'] after:flex after:justify-center after:items-center after:text-white after:w-full after:h-full after:z-10 after:top-full after:left-0 after:bg-seagreen overflow-hidden hover:after:top-0 after:transition-all after:duration-300">Save</button>
                             </div> <!-- end button -->
@@ -126,13 +127,20 @@
                         success: function(response) {
                             // console.log(response.message); // Handle success response
 
+                            if (response.mode == 1) {
+                                element.addClass('text-green-500');
+                            }else{
+                                element.addClass('text-red-500');
+                            }
+
                             element.text(response.message);
+
                             element.fadeIn();
                             $('form#idCardScanForm')[0].reset();
                             // Change inner text to 'Scan your ID' after another 3 seconds
                             setTimeout(function() {
                                 element.fadeOut();
-                            }, 3000);
+                            }, 5000);
                         },
                         error: function(xhr, status, error) {
                             // console.error(error); // Handle error
@@ -141,7 +149,7 @@
                             // Change inner text to 'Scan your ID' after another 3 seconds
                             setTimeout(function() {
                                 element.fadeOut();
-                            }, 3000);
+                            }, 5000);
                         }
                     });
                 });

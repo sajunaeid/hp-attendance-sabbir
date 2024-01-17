@@ -67,20 +67,12 @@ class AttendanceController extends Controller
                     'employee_id' => $requestedEmployee->id,
                     'in_time' => $carbonated,
                 ]);
-                return response()->json(['message' => $requestedEmployee->name.' IN.']);
+                return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
 
             } else {
 
                 // Check if it's been more than 2 minutes since the last scan
                 $lastScanTime = Carbon::parse($previousScanToday->created_at);
-
-                // return $formattedDateTime;
-
-                // $totalDuration = $carbonated->diffInSeconds($lastScanTime);
-                // return response()->json(['message' => gmdate('H:i:s', $totalDuration)]);
-
-                // return response()->json(['message' => $carbonated->diffInSeconds($lastScanTime)]);
-
                 if ($carbonated->diffInSeconds($lastScanTime) < 120) {
                     return response()->json(['message' => 'Please wait at least 2 minutes before scanning again.']);
                 }
@@ -93,13 +85,7 @@ class AttendanceController extends Controller
                     $eh_inTime = Carbon::parse($empHour->in_time);
                     $eh_outTime = Carbon::parse($now);
 
-                    // Updating information when leaving
                     $empHour->out_time = $carbonated;
-
-
-
-
-                    // Find the difference in minutes
                     $minutesDifference = $carbonated->diffInMinutes($eh_inTime);
 
                     // Calculate hours and remaining minutes
@@ -112,14 +98,14 @@ class AttendanceController extends Controller
                     // $workedHour = Carbon::createFromFormat('H:i:s', $timeString);
                     $empHour->wh_time = $workedHour;
                     $empHour->update();
-                    return response()->json(['message' => $requestedEmployee->name.' OUT.']);
+                    return response()->json(['message' => $requestedEmployee->name.' OUT.', 'mode' => 2]);
                 }else {
                     $this->createAttendance($requestedEmployee->id, 1, $carbonated);
                     Hour::create([
                         'employee_id' => $requestedEmployee->id,
                         'in_time' => $carbonated,
                     ]);
-                    return response()->json(['message' => $requestedEmployee->name.' IN.']);
+                    return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
                 }
             }
         }

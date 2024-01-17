@@ -93,7 +93,6 @@
 
 
 
-            @role('admin')
             <li class="menu-title">Management</li>
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
@@ -145,7 +144,6 @@
                     </li>
                 </ul>
             </li>
-            @endrole
 
         </ul>
     </div>

@@ -32,6 +32,7 @@
                                     <th>Sl</th>
                                     <th>Name</th>
                                     <th>ID</th>
+                                    <th>Presence</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -100,6 +101,19 @@
                                     var statusLabels = '<span  class="text-green-500 text-sm px-2 inline-block">Present</span>';
                                 }else{
                                     var statusLabels = '<span  class="text-red-500 text-sm px-2 inline-block">Absent</span>';
+                                }
+                                // console.log(data);
+
+                                return statusLabels;
+                            }
+                        },
+                        {
+                            data: null,
+                            render: function (data) {
+                                if (data.state == 1 ){
+                                    var statusLabels = '<span  class="text-green-500 text-sm px-2 inline-block">In</span>';
+                                }else{
+                                    var statusLabels = '<span  class="text-red-500 text-sm px-2 inline-block">Out</span>';
                                 }
                                 // console.log(data);
 

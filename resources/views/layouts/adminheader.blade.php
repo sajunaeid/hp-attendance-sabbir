@@ -1,17 +1,12 @@
 <header class="app-header">
     <div class="flex items-center px-6 gap-3">
-        <!-- Brand Logo -->
-        <a href="index.html" class="logo-box">
-            <!-- Light Brand Logo -->
-            <div class="logo-light">
-                <img src="{{asset('admindash/asset/css/app.min.css')}}assets/images/logo-light.png" class="logo-lg" alt="Light logo">
-                <img src="{{asset('admindash/asset/css/app.min.css')}}assets/images/logo-sm.png" class="logo-sm" alt="Small logo">
-            </div>
+
+        <!-- Sidenav Brand Logo -->
+        <a href="{{route('home')}}" class="p-2 block sm:hidden">
 
             <!-- Dark Brand Logo -->
-            <div class="logo-dark">
-                <img src="{{asset('admindash/asset/css/app.min.css')}}assets/images/logo-dark.png" class="logo-lg" alt="Dark logo">
-                <img src="{{asset('admindash/asset/css/app.min.css')}}assets/images/logo-sm.png" class="logo-sm" alt="Small logo">
+            <div class="flex justify-center items-center">
+                <img src="{{asset('hp.svg')}}" class="h-10" alt="Hahneman Pharmacy">
             </div>
         </a>
 

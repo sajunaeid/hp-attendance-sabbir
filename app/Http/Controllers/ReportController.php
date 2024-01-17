@@ -68,7 +68,15 @@ class ReportController extends Controller
                     return 2 ;
                 }
             })
-            ->rawColumns(['ads'])
+            ->addColumn('state', function ($employee) use ($targatedDate){
+                $hour = Hour::where('employee_id',$employee->id)->whereDate('created_at', $targatedDate)->latest()->first();
+                if ($hour && $hour->in_time && !$hour->out_time) {
+                    return 1;
+                } elseif($hour && $hour->in_time && $hour->out_time) {
+                    return 2 ;
+                }
+            })
+            ->rawColumns(['ads','state'])
             ->make(true);
         }
         return view('reports.daily',['targatedDate'=>$targatedDate]);

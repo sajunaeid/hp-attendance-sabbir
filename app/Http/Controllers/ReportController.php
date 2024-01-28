@@ -50,6 +50,25 @@ class ReportController extends Controller
     }
 
 
+    /**
+     * Show daily report.
+     */
+    public function latest(Request $request)
+    {
+
+        $targatedDate = now()->toDateString();
+
+        if ($request->ajax()) {
+
+            return DataTables::of(
+                Attendance::with('employee')->latest()->take(5)->get()
+            )
+            ->make(true);
+        }
+
+    }
+
+
     public function present(Request $request)
     {
         if ($request->targatedDay) {

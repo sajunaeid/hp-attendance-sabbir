@@ -30,6 +30,11 @@ Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::resource('attendences', AttendanceController::class);
 
 
+Route::group(['prefix'=>'reports'], function(){
+    Route::get('/latest', [ReportController::class, 'latest'])->name('reports.latest');
+});
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

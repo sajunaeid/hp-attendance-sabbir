@@ -61,7 +61,7 @@ class ReportController extends Controller
         if ($request->ajax()) {
 
             return DataTables::of(
-                Attendance::with('employee')->latest()->take(5)->get()
+                Attendance::with('employee')->whereDate('created_at', $targatedDate)->latest()->take(5)->get()
             )
             ->make(true);
         }

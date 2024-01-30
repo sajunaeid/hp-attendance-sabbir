@@ -83,7 +83,8 @@
                                 <p class="text-red-700">You can only scan after 9 am and before 10pm</p>
                             </div>
                                 <h2 class="my-6 text-xl font-bold text-red-700 text-center min-h-18" >Scan Your ID Card</h2>
-                                <h2 class="my-24 text-2xl font-bold text-center" id="scanNotification"></h2>
+                                <h2 class="my-24 text-2xl font-bold text-center hidden" id="scanNotification"></h2>
+
                         </div>
                     </div>
 
@@ -196,52 +197,70 @@
                     }
                 });
 
-                // $('#emp_number_input').on('input',function() {
-                //     // Trigger form submission when the input value changes
-                //     var inputValue = $(this).val();
-                //     if (inputValue.length >= 9) {
-                //         console.log(inputValue);
-                //         $('form#idCardScanForm').submit();
-                //     }
-                // });
+
+
+
 
                 $('form#idCardScanForm').submit(function(event) {
                     event.preventDefault(); // Prevent default form submission
 
-                    var formData = $(this).serialize(); // Serialize form data
+                    // Prevent multiple submissions
+                    if ($(this).data('submitted') === true) {
+                        return;
+                    }
+
+                    var formData = new FormData(this); // Serialize form data
 
                     $.ajax({
                         type: 'POST',
                         url: '{{ route("attendences.store") }}', // Replace with your route name
                         data: formData,
+                        processData: false,
+                        contentType: false,
                         dataType: 'json',
+                        beforeSend: function() {
+                            // Disable submit button or show loading indicator
+                            // $(this).find('button[type="submit"]').prop('disabled', true);
+                            $(this).data('submitted', true);
+                        },
                         success: function(response) {
-                            // console.log(response.message); // Handle success response
+                            // Handle success response
                             datatablelist.draw();
 
-                            if (response.mode == 1) {
-                                element.addClass('text-green-500');
-                            }else{
-                                element.addClass('text-red-500');
-                            }
+                            var newClass = (response.mode == 1) ? 'text-green-500' : 'text-red-500';
+                            var oldClass = (response.mode == 1) ? 'text-red-500' : 'text-green-500';
+
+                            element.removeClass(oldClass).addClass(newClass);
+
+
+                            $('form#idCardScanForm')[0].reset();
+
 
                             element.text(response.message);
-
                             element.fadeIn();
+                            setTimeout(function() {
+                                element.fadeOut();
+                                element.text('');
+                            }, 5000);
+                        },
+                        error: function(xhr, status, error) {
+                            var newClass = (response.mode == 1) ? 'text-green-500' : 'text-red-500';
+                            var oldClass = (response.mode == 1) ? 'text-red-500' : 'text-green-500';
+
+                            element.removeClass(oldClass).addClass(newClass);
+                            // Log the error to console for debugging
+                            console.error(xhr.responseText);
+
                             $('form#idCardScanForm')[0].reset();
-                            // Change inner text to 'Scan your ID' after another 3 seconds
+                            element.text('Something went wrong. Please try again.');
+                            element.fadeIn();
                             setTimeout(function() {
                                 element.fadeOut();
                             }, 5000);
                         },
-                        error: function(xhr, status, error) {
-                            // console.error(error); // Handle error
-                            element.text('Something Wrong');
-                            $('form#idCardScanForm')[0].reset();
-                            // Change inner text to 'Scan your ID' after another 3 seconds
-                            setTimeout(function() {
-                                element.fadeOut();
-                            }, 5000);
+                        complete: function() {
+                            // Reset the submitted flag to allow future submissions
+                            $(this).data('submitted', false);
                         }
                     });
                 });

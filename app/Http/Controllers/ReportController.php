@@ -87,7 +87,7 @@ class ReportController extends Controller
                         if ($hour && $hour->in_time && $hour->out_time) {
                             return 1;
                         } else {
-                            return 2;
+                            return 3;
                         }
                     } else {
 

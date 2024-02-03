@@ -97,10 +97,12 @@
                         {
                             data: null,
                             render: function (data) {
-                                if (data.ads == true ){
+                                if (data.ads == 1 ){
                                     var statusLabels = '<span  class="text-green-500 text-sm px-2 inline-block">Present</span>';
-                                }else{
+                                }else if(data.ads == 2 ){
                                     var statusLabels = '<span  class="text-red-500 text-sm px-2 inline-block">Absent</span>';
+                                }else{
+                                    var statusLabels = '<span  class="text-red-500 text-sm px-2 inline-block">No out Scan</span>';
                                 }
                                 // console.log(data);
 

@@ -82,17 +82,7 @@ class ReportController extends Controller
             ->addColumn('ads', function ($employee) use ($targatedDate){
                 $scantoday = Hour::where('employee_id',$employee->id)->whereDate('created_at', $targatedDate)->get();
                 if ($scantoday->count() > 0) {
-                    if ($scantoday->count() == 1) {
-                        $hour = Hour::where('employee_id',$employee->id)->whereDate('created_at', $targatedDate)->latest()->first();
-                        if ($hour && $hour->in_time && $hour->out_time) {
-                            return 1;
-                        } else {
-                            return 3;
-                        }
-                    } else {
-
-                        return 1;
-                    }
+                    return 1;
                 } else {
                     return 2 ;
                 }

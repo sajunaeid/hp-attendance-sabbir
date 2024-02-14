@@ -68,6 +68,24 @@ class ReportController extends Controller
 
     }
 
+    /**
+     * Show daily report.
+     */
+    public function dailyscan(Request $request)
+    {
+
+        $targatedDate = now()->toDateString();
+
+        if ($request->ajax()) {
+
+            return DataTables::of(
+                Attendance::with('employee')->whereDate('created_at', $targatedDate)->latest()->get()
+            )
+            ->make(true);
+        }
+
+    }
+
 
     public function present(Request $request)
     {

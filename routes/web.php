@@ -56,11 +56,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/yearly', [ReportController::class, 'yearly'])->name('reports.yearly');
         Route::get('/range', [ReportController::class, 'range'])->name('reports.range');
         Route::get('/present', [ReportController::class, 'present'])->name('reports.present');
+        Route::get('/dailyscan', [ReportController::class, 'dailyscan'])->name('reports.dailyscan');
     });
 
-    // Route::controller(ReportController::class)->group(function () {
-    //     Route::get('/orders/{id}', 'daily')->name('reports.daily');
-    // });
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('/orders/{id}', 'daily')->name('reports.daily');
+    });
 });
 
 require __DIR__.'/auth.php';

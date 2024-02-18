@@ -73,7 +73,7 @@ class AttendanceController extends Controller
 
                 // Check if it's been more than 2 minutes since the last scan
                 $lastScanTime = Carbon::parse($previousScanToday->created_at);
-                if ($carbonated->diffInSeconds($lastScanTime) <= 5) {
+                if ($carbonated->diffInSeconds($lastScanTime) <= 20) {
                     return response()->json(['message' => 'Please wait at least 2 minutes before scanning again.', 'mode' => 2]);
                 }
 

@@ -59,9 +59,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/dailyscan', [ReportController::class, 'dailyscan'])->name('reports.dailyscan');
     });
 
-    Route::controller(ReportController::class)->group(function () {
-        Route::get('/orders/{id}', 'daily')->name('reports.daily');
-    });
+    // Route::controller(ReportController::class)->group(function () {
+    //     Route::get('/orders/{id}', 'daily')->name('reports.daily');
+    // });
 });
 
 require __DIR__.'/auth.php';

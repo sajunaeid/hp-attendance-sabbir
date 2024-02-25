@@ -203,18 +203,8 @@
 
                 $('form#idCardScanForm').submit(function(event) {
                     event.preventDefault(); // Prevent default form submission
-
-                    // Prevent multiple submissions
-                    if ($form.data('submitted') === true) {
-                        // Form already submitted
-                        return false;
-                    } else {
-                        // Mark form as submitted
-                        $form.data('submitted', true);
-                        return true;
-                    }
-
                     var formData = new FormData(this); // Serialize form data
+
 
                     $.ajax({
                         type: 'POST',

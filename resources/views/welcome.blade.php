@@ -216,7 +216,7 @@
                         beforeSend: function() {
                             // Disable submit button or show loading indicator
                             // $(this).find('button[type="submit"]').prop('disabled', true);
-                            // $(this).data('submitted', true);
+                            $(this).data('submitted', true);
                         },
                         success: function(response) {
                             // Handle success response
@@ -255,7 +255,7 @@
                         },
                         complete: function() {
                             // Reset the submitted flag to allow future submissions
-                            // $(this).data('submitted', false);
+                            $(this).data('submitted', false);
                         }
                     });
                 });

@@ -205,8 +205,13 @@
                     event.preventDefault(); // Prevent default form submission
 
                     // Prevent multiple submissions
-                    if ($(this).data('submitted') === true) {
-                        return;
+                    if ($form.data('submitted') === true) {
+                        // Form already submitted
+                        return false;
+                    } else {
+                        // Mark form as submitted
+                        $form.data('submitted', true);
+                        return true;
                     }
 
                     var formData = new FormData(this); // Serialize form data
@@ -221,7 +226,7 @@
                         beforeSend: function() {
                             // Disable submit button or show loading indicator
                             // $(this).find('button[type="submit"]').prop('disabled', true);
-                            // $(this).data('submitted', true);
+                            $(this).data('submitted', true);
                         },
                         success: function(response) {
                             // Handle success response

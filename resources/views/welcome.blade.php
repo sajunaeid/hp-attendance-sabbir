@@ -221,7 +221,7 @@
                         beforeSend: function() {
                             // Disable submit button or show loading indicator
                             // $(this).find('button[type="submit"]').prop('disabled', true);
-                            $(this).data('submitted', true);
+                            // $(this).data('submitted', true);
                         },
                         success: function(response) {
                             // Handle success response

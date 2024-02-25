@@ -33,46 +33,48 @@ class AttendanceController extends Controller
     public function store(StoreAttendanceRequest $request)
     {
 
-        // return $request;
+        // Finding the employee withe his/her employee id.
         $requestedEmployee = Employee::where('emp_id', $request->emp_number)->first();
-
+        // If employee not found with the requested employee id.
         if (!$requestedEmployee) {
             return response()->json(['message' => 'Employee not Found.']);
         }
 
-        $currentTime = Carbon::now();
-        $nineAm = Carbon::today()->setHour(9);
-        $tenPm = Carbon::today()->setHour(22);
-        $now = Carbon::now()->format('h:i:s');
-        $today = Carbon::now()->format('Y-m-d');
+        $currentTime = Carbon::now();//Current date time.
+        $nineAm = Carbon::today()->setHour(9);// Scan start time
+        $tenPm = Carbon::today()->setHour(22);// Scan end time
+        $now = Carbon::now()->format('h:i:s');// Current time
+        $today = Carbon::now()->format('Y-m-d');// Current date
 
         $formattedDateTime = $currentTime->format('Y-m-d H:i:s');
-        $carbonated = Carbon::parse($formattedDateTime)->setTimezone('Asia/Dhaka');
+        $carbonated = Carbon::parse($formattedDateTime)->setTimezone('Asia/Dhaka');// Fixing local time for dhaka/asia
 
         if ($currentTime < $nineAm) {
+            // Checking if it is before 9 am.
             return response()->json(['message' => 'You can only scan after 9 am']);
-        } elseif ($currentTime > $tenPm) {
+        } elseif ($currentTime >= $tenPm) {
+            // Checking if it is after 10 pm.
             return response()->json(['message' => 'Sorry, you are late']);
         } else {
-            // Check if there's an entry for today's date for this employee
+            // Checking is there's an entry for today's date for this employee
             // Last scan today
             $previousScanToday = Attendance::latest()->where('employee_id', $requestedEmployee->id)
             ->whereDate('created_at', $today)
             ->orderBy('scan_time', 'desc')->first();
 
             if (!$previousScanToday) {
-
+                // If he didn't scan any today
                 $this->createAttendance($requestedEmployee->id, 1, $carbonated);
                 Hour::create([
                     'employee_id' => $requestedEmployee->id,
                     'in_time' => $carbonated,
                 ]);
                 return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
-
             } else {
 
                 // Check if it's been more than 2 minutes since the last scan
                 $lastScanTime = Carbon::parse($previousScanToday->created_at);
+
                 if ($carbonated->diffInSeconds($lastScanTime) <= 20) {
                     return response()->json(['message' => 'Please wait at least 2 minutes before scanning again.', 'mode' => 2]);
                 }
@@ -81,6 +83,7 @@ class AttendanceController extends Controller
                 // last snan type in - out
                 if ($previousScanToday->scan_type == 1) {
                     $this->createAttendance($requestedEmployee->id, 2, $carbonated);
+
                     $empHour = Hour::where('employee_id',$requestedEmployee->id)->orderBy('id', 'desc')->first();
                     $eh_inTime = Carbon::parse($empHour->in_time);
                     $eh_outTime = Carbon::parse($now);
@@ -144,6 +147,15 @@ class AttendanceController extends Controller
         //
     }
 
+    protected function inentry($requestedEmployee,$carbonated){
+        $this->createAttendance($requestedEmployee->id, 1, $carbonated);
+        Hour::create([
+            'employee_id' => $requestedEmployee->id,
+            'in_time' => $carbonated,
+        ]);
+        return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
+    }
+
 
     protected function createAttendance($employeeId, $scanType, $scanTime)
     {
@@ -153,4 +165,7 @@ class AttendanceController extends Controller
             'scan_time' => $scanTime,
         ]);
     }
+
+
+
 }

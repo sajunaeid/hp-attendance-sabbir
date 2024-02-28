@@ -83,7 +83,7 @@
                                 <p class="text-red-700">You can only scan after 9 am and before 10pm</p>
                             </div>
                                 <h2 class="my-6 text-xl font-bold text-red-700 text-center min-h-18" >Scan Your ID Card</h2>
-                                <h2 class="my-24 text-2xl font-bold text-center hidden" id="scanNotification"></h2>
+                                <h2 class="my-24 text-2xl font-bold text-center hidden" id="message"></h2>
 
                         </div>
                     </div>
@@ -196,12 +196,6 @@
                         $('form#idCardScanForm').submit();
                     }
                 });
-
-
-
-
-
-                
 
                 $('form#idCardScanForm').submit(function(event) {
                     event.preventDefault(); // Prevent default form submission

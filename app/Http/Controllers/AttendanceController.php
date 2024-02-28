@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\Hour;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Carbon\Carbon;
@@ -64,11 +65,7 @@ class AttendanceController extends Controller
 
             if (!$previousScanToday) {
                 // If he didn't scan any today
-                $this->createAttendance($requestedEmployee->id, 1, $carbonated);
-                Hour::create([
-                    'employee_id' => $requestedEmployee->id,
-                    'in_time' => $carbonated,
-                ]);
+                $this->inentry($requestedEmployee, $carbonated);
                 return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
             } else {
 
@@ -82,7 +79,7 @@ class AttendanceController extends Controller
 
                 // last snan type in - out
                 if ($previousScanToday->scan_type == 1) {
-                    $this->createAttendance($requestedEmployee->id, 2, $carbonated);
+                    // $this->createAttendance($requestedEmployee->id, 2, $carbonated);
 
                     $empHour = Hour::where('employee_id',$requestedEmployee->id)->orderBy('id', 'desc')->first();
                     $eh_inTime = Carbon::parse($empHour->in_time);
@@ -99,15 +96,34 @@ class AttendanceController extends Controller
                     // Convert the string to a Carbon instance
                     $workedHour = Carbon::create(0, 0, 0, $hr, $mn, 0)->format('H:i:s');;
                     // $workedHour = Carbon::createFromFormat('H:i:s', $timeString);
+
+
+
+                    DB::transaction(function () use ($requestedEmployee, $carbonated){
+                        Attendance::create([
+                            'employee_id' => $requestedEmployee->id,
+                            'scan_type' => 2,
+                            'scan_time' => $carbonated,
+                        ]);
+                    });
+
                     $empHour->wh_time = $workedHour;
                     $empHour->update();
+
+
                     return response()->json(['message' => $requestedEmployee->name.' OUT.', 'mode' => 2]);
                 }else {
-                    $this->createAttendance($requestedEmployee->id, 1, $carbonated);
-                    Hour::create([
-                        'employee_id' => $requestedEmployee->id,
-                        'in_time' => $carbonated,
-                    ]);
+
+                    $this->inentry($requestedEmployee, $carbonated);
+
+
+                    // old code is here...
+                    // $this->createAttendance($requestedEmployee->id, 1, $carbonated);
+                    // Hour::create([
+                    //     'employee_id' => $requestedEmployee->id,
+                    //     'in_time' => $carbonated,
+                    // ]);
+
                     return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
                 }
             }
@@ -148,22 +164,33 @@ class AttendanceController extends Controller
     }
 
     protected function inentry($requestedEmployee,$carbonated){
-        $this->createAttendance($requestedEmployee->id, 1, $carbonated);
-        Hour::create([
-            'employee_id' => $requestedEmployee->id,
-            'in_time' => $carbonated,
-        ]);
-        return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
+        DB::transaction(function () use ($requestedEmployee, $carbonated){
+            Attendance::create([
+                'employee_id' => $requestedEmployee->id,
+                'scan_type' => 1,
+                'scan_time' => $carbonated,
+            ]);
+
+            Hour::create([
+                'employee_id' => $requestedEmployee->id,
+                'in_time' => $carbonated,
+            ]);
+        });
     }
 
 
     protected function createAttendance($employeeId, $scanType, $scanTime)
     {
-        Attendance::create([
-            'employee_id' => $employeeId,
-            'scan_type' => $scanType,
-            'scan_time' => $scanTime,
-        ]);
+        DB::transaction(function ($employeeId, $scanType, $scanTime) {
+
+            $attendance = Attendance::create([
+                'employee_id' => $employeeId,
+                'scan_type' => $scanType,
+                'scan_time' => $scanTime,
+            ]);
+        });
+
+
     }
 
 

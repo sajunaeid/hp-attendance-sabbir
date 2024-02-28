@@ -38,7 +38,7 @@ class AttendanceController extends Controller
         $requestedEmployee = Employee::where('emp_id', $request->emp_number)->first();
         // If employee not found with the requested employee id.
         if (!$requestedEmployee) {
-            return response()->json(['message' => 'Employee not Found.']);
+            return response()->json(['message' => 'Employee not Found.', 'mode' => 2]);
         }
 
         $currentTime = Carbon::now();//Current date time.
@@ -74,58 +74,50 @@ class AttendanceController extends Controller
 
                 if ($carbonated->diffInSeconds($lastScanTime) <= 20) {
                     return response()->json(['message' => 'Please wait at least 2 minutes before scanning again.', 'mode' => 2]);
+                }else{
+                    // last snan type in - out
+                    if ($previousScanToday->scan_type == 1) {
+                        // $this->createAttendance($requestedEmployee->id, 2, $carbonated);
+
+                        $empHour = Hour::where('employee_id',$requestedEmployee->id)->orderBy('id', 'desc')->first();
+                        $eh_inTime = Carbon::parse($empHour->in_time);
+                        $eh_outTime = Carbon::parse($now);
+
+                        $empHour->out_time = $carbonated;
+                        $minutesDifference = $carbonated->diffInMinutes($eh_inTime);
+
+                        // Calculate hours and remaining minutes
+                        $hr = intdiv($minutesDifference, 60);
+                        $mn = $minutesDifference % 60;
+                        $timeString = strval($hr).':'.strval($mn).':00';
+                        // Convert the string to a Carbon instance
+                        $workedHour = Carbon::create(0, 0, 0, $hr, $mn, 0)->format('H:i:s');;
+                        // $workedHour = Carbon::createFromFormat('H:i:s', $timeString);
+
+
+
+                        DB::transaction(function () use ($requestedEmployee, $carbonated){
+                            Attendance::create([
+                                'employee_id' => $requestedEmployee->id,
+                                'scan_type' => 2,
+                                'scan_time' => $carbonated,
+                            ]);
+                        });
+
+                        $empHour->wh_time = $workedHour;
+                        $empHour->update();
+
+
+                        return response()->json(['message' => $requestedEmployee->name.' OUT.', 'mode' => 2]);
+                    }else {
+
+                        $this->inentry($requestedEmployee, $carbonated);
+                        return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
+                    }
                 }
 
 
-                // last snan type in - out
-                if ($previousScanToday->scan_type == 1) {
-                    // $this->createAttendance($requestedEmployee->id, 2, $carbonated);
 
-                    $empHour = Hour::where('employee_id',$requestedEmployee->id)->orderBy('id', 'desc')->first();
-                    $eh_inTime = Carbon::parse($empHour->in_time);
-                    $eh_outTime = Carbon::parse($now);
-
-                    $empHour->out_time = $carbonated;
-                    $minutesDifference = $carbonated->diffInMinutes($eh_inTime);
-
-                    // Calculate hours and remaining minutes
-                    $hr = intdiv($minutesDifference, 60);
-                    $mn = $minutesDifference % 60;
-
-                    $timeString = strval($hr).':'.strval($mn).':00';
-                    // Convert the string to a Carbon instance
-                    $workedHour = Carbon::create(0, 0, 0, $hr, $mn, 0)->format('H:i:s');;
-                    // $workedHour = Carbon::createFromFormat('H:i:s', $timeString);
-
-
-
-                    DB::transaction(function () use ($requestedEmployee, $carbonated){
-                        Attendance::create([
-                            'employee_id' => $requestedEmployee->id,
-                            'scan_type' => 2,
-                            'scan_time' => $carbonated,
-                        ]);
-                    });
-
-                    $empHour->wh_time = $workedHour;
-                    $empHour->update();
-
-
-                    return response()->json(['message' => $requestedEmployee->name.' OUT.', 'mode' => 2]);
-                }else {
-
-                    $this->inentry($requestedEmployee, $carbonated);
-
-
-                    // old code is here...
-                    // $this->createAttendance($requestedEmployee->id, 1, $carbonated);
-                    // Hour::create([
-                    //     'employee_id' => $requestedEmployee->id,
-                    //     'in_time' => $carbonated,
-                    // ]);
-
-                    return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
-                }
             }
         }
 
@@ -190,9 +182,6 @@ class AttendanceController extends Controller
             ]);
         });
 
-
     }
-
-
 
 }

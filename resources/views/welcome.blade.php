@@ -201,62 +201,57 @@
 
 
 
+                
+
                 $('form#idCardScanForm').submit(function(event) {
                     event.preventDefault(); // Prevent default form submission
-                    var formData = new FormData(this); // Serialize form data
 
+                    var form = $(this);
+                    var formData = new FormData(form[0]); // Serialize form data
+                    var submitButton = form.find(':submit');
+                    var messageElement = $('#message');
+
+                    submitButton.prop('disabled', true); // Disable submit button during AJAX request
 
                     $.ajax({
                         type: 'POST',
-                        url: '{{ route("attendences.store") }}', // Replace with your route name
+                        url: form.attr('action'), // Use form's action attribute
                         data: formData,
                         processData: false,
                         contentType: false,
                         dataType: 'json',
                         beforeSend: function() {
-                            $(this).data('submitted', true);
+                            // Optionally, you can show a loading spinner or message here
                         },
                         success: function(response) {
                             // Handle success response
+                            messageElement.removeClass('text-red-500 text-green-500').addClass(response.mode == 1 ? 'text-green-500' : 'text-red-500').text(response.message).fadeIn();
+
+                            // Optionally, update datatable
                             datatablelist.draw();
 
-                            var newClass = (response.mode == 1) ? 'text-green-500' : 'text-red-500';
-                            var oldClass = (response.mode == 1) ? 'text-red-500' : 'text-green-500';
+                            form[0].reset(); // Reset form
 
-                            element.removeClass(oldClass).addClass(newClass);
-
-
-                            $('form#idCardScanForm')[0].reset();
-
-
-                            element.text(response.message);
-                            element.fadeIn();
                             setTimeout(function() {
-                                element.fadeOut();
-                                element.text('');
+                                messageElement.fadeOut().text('');
                             }, 5000);
                         },
                         error: function(xhr, status, error) {
-                            var newClass = (response.mode == 1) ? 'text-green-500' : 'text-red-500';
-                            var oldClass = (response.mode == 1) ? 'text-red-500' : 'text-green-500';
-
-                            element.removeClass(oldClass).addClass(newClass);
-                            // Log the error to console for debugging
                             console.error(xhr.responseText);
+                            messageElement.removeClass('text-red-500 text-green-500').addClass(response.mode == 1 ? 'text-green-500' : 'text-red-500').text('Something went wrong. Please try again.').fadeIn();
 
-                            $('form#idCardScanForm')[0].reset();
-                            element.text('Something went wrong. Please try again.');
-                            element.fadeIn();
+                            form[0].reset(); // Reset form
+
                             setTimeout(function() {
-                                element.fadeOut();
+                                messageElement.fadeOut();
                             }, 5000);
                         },
                         complete: function() {
-                            // Reset the submitted flag to allow future submissions
-                            $(this).data('submitted', false);
+                            submitButton.prop('disabled', false); // Re-enable submit button
                         }
                     });
                 });
+
             });
         </script>
     </body>

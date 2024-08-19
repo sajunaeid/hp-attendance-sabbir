@@ -5,6 +5,8 @@
 
     {{-- Header Style --}}
     <x-slot name="headerstyle">
+        <!-- Style -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     </x-slot>
 
     {{-- Page Content --}}
@@ -17,6 +19,13 @@
                     <div class="grid lg:grid-cols-2 gap-5">
                         @csrf
                         @method('PATCH')
+                        <div class="col-span-2 flex items-end gap-5">
+                            <img src="{{$employee->pp ? asset($employee->pp) :'https://picsum.photos/200'}}" alt="" srcset="">
+                            <div class="">
+                                <label for="pp" class="block mb-2">Profile Picture</label>
+                                <input type="file" name="pp" id="pp"  class="form-input">
+                            </div>
+                        </div>
 
 
                         <div>
@@ -44,10 +53,31 @@
                             <input type="text" class="form-input" id="emp_number" name="emp_number" required value="{{$employee->emp_number }}">
                         </div> <!-- end -->
 
-                        <div>
-                            <label for="wh" class="block mb-2">Working Hour</label>
-                            <input type="number" class="form-input" id="wh" name="wh" required step="1" value="{{$employee->wh }}">
-                        </div> <!-- end -->
+
+                        <div class="flex gap-4">
+
+                            <div>
+                                <label for="wh" class="block mb-2">Working Hour</label>
+                                <input type="number" class="form-input" id="wh" name="wh" required step="1" value="{{$employee->wh }}">
+                            </div> <!-- end -->
+
+
+                            <div class="flex-grow">
+                                <label for="we" class="block mb-2">Working Hour</label>
+                                @php
+                                    $weekends = json_decode($employee->we);
+                                @endphp
+                                <select class="form-input text-gray-900 dark:text-gray-900" name="we[]" multiple id="we">
+                                    <option value="7" {{ in_array(7, $weekends) ? 'selected' : '' }}>Saturday</option>
+                                    <option value="1" {{ in_array(1, $weekends) ? 'selected' : '' }}>Sunday</option>
+                                    <option value="2" {{ in_array(2, $weekends) ? 'selected' : '' }}>Monday</option>
+                                    <option value="3" {{ in_array(3, $weekends) ? 'selected' : '' }}>Tuesday</option>
+                                    <option value="4" {{ in_array(4, $weekends) ? 'selected' : '' }}>Wednesday</option>
+                                    <option value="5" {{ in_array(5, $weekends) ? 'selected' : '' }}>Thursday</option>
+                                    <option value="6" {{ in_array(6, $weekends) ? 'selected' : '' }}>Friday</option>
+                                </select>
+                            </div>
+                        </div>
 
                         <div>
                             <label for="score" class="block mb-2">Score</label>
@@ -82,13 +112,11 @@
 
 
     <x-slot name="script">
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
         <script>
-            // $(document).ready(function() {
-            //     $("form #name").on('blur', () => {
-            //         const slug = slugify($("form #name").val());
-            //         $("form #slug").val(slug);
-            //     });
-            // });
+            $(document).ready(function() {
+                $('#we').select2();
+            });
         </script>
     </x-slot>
 </x-app-layout>

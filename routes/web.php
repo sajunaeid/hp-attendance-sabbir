@@ -9,6 +9,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('permissions', PermissionController::class);
     Route::resource('employees', EmployeeController::class);
+    Route::resource('documents', DocumentController::class);
+    Route::get('/workdays', [EmployeeController::class, 'we'])->name('employees.we');
 
     Route::group(['prefix'=>'reports'], function(){
         Route::get('/daily', [ReportController::class, 'daily'])->name('reports.daily');

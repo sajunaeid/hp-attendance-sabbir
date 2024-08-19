@@ -5,6 +5,8 @@
 
     {{-- Header Style --}}
     <x-slot name="headerstyle">
+        <!-- Style -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     </x-slot>
 
     {{-- Page Content --}}
@@ -44,10 +46,28 @@
                             <input type="text" class="form-input" id="emp_number" name="emp_number" required>
                         </div> <!-- end -->
 
-                        <div>
-                            <label for="wh" class="block mb-2">Working Hour</label>
-                            <input type="number" class="form-input" id="wh" name="wh" required step="1">
-                        </div> <!-- end -->
+                        <div class="flex gap-4">
+
+                            <div>
+                                <label for="wh" class="block mb-2">Working Hour</label>
+                                <input type="number" class="form-input" id="wh" name="wh" required step="1">
+                            </div> <!-- end -->
+
+
+                            <div class="flex-grow">
+                                <label for="we" class="block mb-2">Working Hour</label>
+                                <select class="form-input text-gray-900 dark:text-gray-900" name="we[]" multiple id="we">
+                                    <option value="7">Saturday</option>
+                                    <option value="1">Sunday</option>
+                                    <option value="2">Monday</option>
+                                    <option value="3">Tuesday</option>
+                                    <option value="4">Wednesday</option>
+                                    <option value="5">Thursday</option>
+                                    <option value="6">Friday</option>
+                                </select>
+                            </div>
+                        </div>
+
 
                         <div>
                             <label for="score" class="block mb-2">Score</label>
@@ -83,12 +103,14 @@
 
 
     <x-slot name="script">
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
         <script>
             $(document).ready(function() {
                 $("form #name").on('blur', () => {
                     const slug = slugify($("form #name").val());
                     $("form #slug").val(slug);
                 });
+                $('#we').select2();
             });
         </script>
     </x-slot>

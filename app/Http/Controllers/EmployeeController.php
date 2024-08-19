@@ -47,6 +47,13 @@ class EmployeeController extends Controller
     }
 
 
+    public function we(Request $request)
+    {
+        $employees = Employee::orderBy('id', 'desc')->get();
+        return view('employees.we',['employees'=> $employees]);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -71,6 +78,8 @@ class EmployeeController extends Controller
     public function store(StoreEmployeeRequest $request)
     {
 
+        // return $request;
+
         $employee = Employee::create([
             'name' => $request->name,
             'phone' => $request->phone,
@@ -80,7 +89,9 @@ class EmployeeController extends Controller
             'wh' => $request->wh,
             'score' => $request->score,
             'score_note' => $request->score_note,
+            'we' => json_encode($request->we),
         ]);
+
         return redirect()->route('employees.index')->with(['status' => 200, 'message' => 'Employee Created!']);
 
     }
@@ -94,7 +105,7 @@ class EmployeeController extends Controller
      */
     public function show($id): View
     {
-        $employee = Employee::find($id);
+        $employee = Employee::with('documents')->find($id);
         return view('employees.show',compact('employee'));
     }
 
@@ -135,6 +146,18 @@ class EmployeeController extends Controller
         $employee->wh = $request->wh;
         $employee->score = $request->score;
         $employee->score_note = $request->score_note;
+        $employee->we = json_encode($request->we);
+
+        // Photo
+        if ($request->file('pp')) {
+
+            $file = $request->file('pp');
+            $image_full_name = time().'pp'.'.'.$file->getClientOriginalExtension();
+            $upload_path = 'profilepic/';
+            $image_url = $upload_path.$image_full_name;
+            $success = $file->move($upload_path, $image_full_name);
+            $employee->pp = $image_url;
+        }
 
         $employee->update();
 
@@ -155,6 +178,13 @@ class EmployeeController extends Controller
     {
 
         $employee = Employee::find($id);
+
+        // Deleting profile picture
+        $filePath = public_path($employee->pp);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
         $employee->delete();
         return response()->json(['success' => 'Employee deleted !']);
     }

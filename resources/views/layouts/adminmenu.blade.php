@@ -45,11 +45,11 @@
                             <span class="menu-text">New Employee</span>
                         </a>
                     </li>
-                    {{-- <li class="menu-item">
-                        <a href="{{route('users.index')}}" class="menu-link">
-                            <span class="menu-text">User Trash</span>
+                    <li class="menu-item">
+                        <a href="{{route('employees.we')}}" class="menu-link">
+                            <span class="menu-text">Worke Days</span>
                         </a>
-                    </li> --}}
+                    </li>
                 </ul>
             </li>
 

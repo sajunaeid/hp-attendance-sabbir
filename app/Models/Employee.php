@@ -22,7 +22,9 @@ class Employee extends Model
         'emp_number',
         'wh',
         'score',
-        'score_note'
+        'score_note',
+        'we',
+        'pp'
     ];
 
 
@@ -34,8 +36,11 @@ class Employee extends Model
         // foreign id is the post table which is inside comment table such as: post_id
         // return $this->hasMany(Comment::class, 'post_id', 'id');
         // return $this->hasMany(Comment::class, 'post_id');
+    }
 
 
+    public function documents(){
+        return $this->hasMany(Document::class, 'employee_id','id');
     }
 
 

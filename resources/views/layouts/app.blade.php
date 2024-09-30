@@ -11,7 +11,8 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- App favicon -->
-        <link rel="shortcut icon" href="{{asset('adminto/images/favicon.ico')}}">
+        {{-- <link rel="shortcut icon" href="{{asset('adminto/images/favicon.ico')}}"> --}}
+        <link rel="icon" type="image/png" href="{{asset('favicon.png')}}">
         <!-- App css -->
         <link href="{{asset('adminto/css/app.min.css')}}" rel="stylesheet" type="text/css">
 

@@ -13,7 +13,7 @@
         <div class="card">
             <div class="p-6">
                 @php
-                    $currentDay = date('L');
+                    $currentDay = date('l');
                 @endphp
                 <table id="userTable" class="display stripe text-xs sm:text-base" style="width:100%">
                     <tbody>
@@ -23,13 +23,13 @@
                             @php
                                 $weekends = json_decode($employee->we);
                             @endphp
-                            <td class="p-1 text-center {{ in_array(7, $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 6) border-dashed border-2 border-sky-500  @endif">Saturday</td>
-                            <td class="p-1 text-center {{ in_array(1, $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 7) border-dashed border-2 border-sky-500  @endif">Sunday</td>
-                            <td class="p-1 text-center {{ in_array(2, $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 1) border-dashed border-2 border-sky-500  @endif">Monday</td>
-                            <td class="p-1 text-center {{ in_array(3, $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 2) border-dashed border-2 border-sky-500  @endif">Tuesday</td>
-                            <td class="p-1 text-center {{ in_array(4, $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 3) border-dashed border-2 border-sky-500  @endif">Wednesday</td>
-                            <td class="p-1 text-center {{ in_array(5, $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 4) border-dashed border-2 border-sky-500  @endif">Thursday</td>
-                            <td class="p-1 text-center {{ in_array(6, $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 5) border-dashed border-2 border-sky-500  @endif">Friday</td>
+                            <td class="p-1 text-center {{ in_array('Saturday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Saturday') border-dashed border-2 border-sky-500  @endif">Saturday</td>
+                            <td class="p-1 text-center {{ in_array('Sunday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Sunday') border-dashed border-2 border-sky-500  @endif">Sunday</td>
+                            <td class="p-1 text-center {{ in_array('Monday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Monday') border-dashed border-2 border-sky-500  @endif">Monday</td>
+                            <td class="p-1 text-center {{ in_array('Tuesday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Tuesday') border-dashed border-2 border-sky-500  @endif">Tuesday</td>
+                            <td class="p-1 text-center {{ in_array('Wednesday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Wednesday') border-dashed border-2 border-sky-500  @endif">Wednesday</td>
+                            <td class="p-1 text-center {{ in_array('Thursday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Thursday') border-dashed border-2 border-sky-500  @endif">Thursday</td>
+                            <td class="p-1 text-center {{ in_array('Friday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Friday') border-dashed border-2 border-sky-500  @endif">Friday</td>
                         </tr>
                         @endforeach
                     </tbody>

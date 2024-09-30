@@ -25,10 +25,11 @@ class EmployeeSeeder extends Seeder
                 'emp_id' => $faker->swiftBicNumber ,
                 'emp_number' => $faker->unixTime($max = 'now') ,
                 'wh' => 7,
-                'we' => json_encode(["6"]),
+                'we' => json_encode(["Friday"]),
                 'score'=> $faker->biasedNumberBetween($min = 100, $max = 999, $function = 'sqrt'),
                 'score_note' => $faker->paragraph(10)
             ]);
         }
     }
 }
+// Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, and Sunday

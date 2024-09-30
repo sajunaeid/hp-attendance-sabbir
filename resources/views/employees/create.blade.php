@@ -55,15 +55,15 @@
 
 
                             <div class="flex-grow">
-                                <label for="we" class="block mb-2">Working Hour</label>
+                                <label for="we" class="block mb-2">Weekend</label>
                                 <select class="form-input text-gray-900 dark:text-gray-900" name="we[]" multiple id="we">
-                                    <option value="7">Saturday</option>
-                                    <option value="1">Sunday</option>
-                                    <option value="2">Monday</option>
-                                    <option value="3">Tuesday</option>
-                                    <option value="4">Wednesday</option>
-                                    <option value="5">Thursday</option>
-                                    <option value="6">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                    <option value="Sunday">Sunday</option>
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
                                 </select>
                             </div>
                         </div>

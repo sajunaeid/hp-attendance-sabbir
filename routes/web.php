@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::resource('documents', DocumentController::class);
     Route::get('/workdays', [EmployeeController::class, 'we'])->name('employees.we');
+    Route::get('/oldemployees', [EmployeeController::class, 'old'])->name('employees.old');
+    Route::post('/employees/restore/{employee}', [EmployeeController::class, 'restore'])->name('employees.restore');
+    Route::delete('/employees/fdelete/{employee}', [EmployeeController::class, 'fdelete'])->name('employees.fdelete');
 
     Route::group(['prefix'=>'reports'], function(){
         Route::get('/daily', [ReportController::class, 'daily'])->name('reports.daily');

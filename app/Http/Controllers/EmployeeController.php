@@ -14,6 +14,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
+use Illuminate\Support\Carbon;
 
 class EmployeeController extends Controller
 {
@@ -41,7 +42,7 @@ class EmployeeController extends Controller
         // return $employees = Employee::all();
 
         if ($request->ajax()) {
-            return DataTables::of(Employee::orderBy('id', 'desc'))->make(true);
+            return DataTables::of(Employee::orderBy('name', 'asc'))->make(true);
         }
         return view('employees.index');
     }
@@ -174,19 +175,62 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function destroy($id)
+    public function old(Request $request)
     {
 
-        $employee = Employee::find($id);
-
-        // Deleting profile picture
-        $filePath = public_path($employee->pp);
-        if (file_exists($filePath)) {
-            unlink($filePath);
+        if ($request->ajax()) {
+            return DataTables::of(Employee::withTrashed()->where('deleted_at', '>', Carbon::now()->subWeek())->get())->make(true);
         }
+        return view('employees.old');
 
+
+    }
+
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function destroy($id)
+    {
+        $employee = Employee::find($id);
         $employee->delete();
         return response()->json(['success' => 'Employee deleted !']);
     }
+
+
+    // Restoring a deleted employee
+    public function restore($id)
+    {
+        $employee = Employee::withTrashed()->find($id);
+        $employee->restore();
+        return response()->json(['success' => 'Employee Restored !']);
+    }
+
+
+
+    public function fdelete($id)
+    {
+        $employee = Employee::withTrashed()->find($id);
+
+        if ($employee->pp) {
+            // Deleting profile picture
+            $filePath = public_path($employee->pp);
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
+        $employee->forceDelete();
+        return response()->json(['success' => 'Employee deleted Permanently!']);
+    }
+
+
+
+
 
 }

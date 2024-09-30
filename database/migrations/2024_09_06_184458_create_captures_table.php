@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('employees', function (Blueprint $table) {
-            $table->text('we')->nullable();
-            $table->string('pp')->nullable();
-            $table->softDeletes();
+        Schema::create('captures', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('attendance_id');
+            $table->foreign('attendance_id')->references('id')->on('attendances')-> onDelete('cascade');
+            $table->string('image');
+            $table->timestamps();
         });
     }
 
@@ -23,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('employees', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('captures');
     }
 };

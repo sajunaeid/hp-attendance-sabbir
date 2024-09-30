@@ -1,6 +1,6 @@
 <x-app-layout>
     {{-- Title --}}
-    <x-slot name="title">Employees</x-slot>
+    <x-slot name="title">Old Employees</x-slot>
 
 
     {{-- Header Style --}}
@@ -52,7 +52,7 @@
                 // ],
                 processing: true,
                 serverSide: true,
-                ajax: "{!! route('employees.index') !!}",
+                ajax: "{!! route('employees.old') !!}",
                 columns: [{
                         "render": function(data, type, full, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
@@ -92,6 +92,9 @@
                                 <a href="${BASE_URL}employees/${data.id}/edit" class="text-seagreen/70 hover:text-seagreen  hover:scale-105 transition duration-150 ease-in-out text-xl" >
                                     <span class="menu-icon"><i class="mdi mdi-table-edit"></i></span>
                                 </a>
+                                <button type="button"  class="text-blue-500/70 hover:text-red  hover:scale-105 transition duration-150 ease-in-out text-xl" onclick="userRestore(${data.id});">
+                                    <span class="menu-icon"><i class="mdi mdi-backup-restore"></i></span>
+                                    </button>
                                 <button type="button"  class="text-red-500/70 hover:text-red  hover:scale-105 transition duration-150 ease-in-out text-xl" onclick="userDelete(${data.id});">
                                     <span class="menu-icon"><i class="mdi mdi-delete"></i></span>
                                     </button>
@@ -106,11 +109,9 @@
 
 
             function userDelete(userID) {
-
-
                 Swal.fire({
-                    title: "Delete ?",
-                    text: "Are you sure to delete this Employee ?",
+                    title: "Parmanently Delete ?",
+                    text: "Are you sure to delete this Employee parmanently?",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -123,7 +124,38 @@
                     if (result.value) {
                         $.ajax({
                             method: 'DELETE',
-                            url: BASE_URL + 'employees/' + userID,
+                            url: BASE_URL + 'employees/fdelete/' + userID,
+                            success: function(response) {
+                                if (response.success) {
+                                    $("#ajaxflash div p").text(response.success);
+                                    $("#ajaxflash").fadeIn().fadeOut(5000);
+                                    datatablelist.draw();
+                                } else {
+                                    Swal.fire('Not deletable!', 'Something is dependent on it.', 'error');
+                                    datatablelist.draw();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            function userRestore(userID) {
+                Swal.fire({
+                    title: "Restore ?",
+                    text: "Are you sure to restore this Employee ?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: "Restore",
+                    background: 'rgba(255, 255, 255, 0.6)',
+                    padding: '20px',
+                    confirmButtonColor: '#0db8a6',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            method: 'POST',
+                            url: BASE_URL + 'employees/restore/'+ userID,
                             success: function(response) {
                                 if (response.success) {
                                     $("#ajaxflash div p").text(response.success);

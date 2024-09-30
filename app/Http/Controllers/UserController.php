@@ -138,7 +138,7 @@ class UserController extends Controller
         // return $id;
 
 
-        
+
 
         $this->validate($request, [
             'name' => 'required',

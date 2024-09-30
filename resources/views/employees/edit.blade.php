@@ -68,13 +68,13 @@
                                     $weekends = json_decode($employee->we);
                                 @endphp
                                 <select class="form-input text-gray-900 dark:text-gray-900" name="we[]" multiple id="we">
-                                    <option value="7" {{ in_array(7, $weekends) ? 'selected' : '' }}>Saturday</option>
-                                    <option value="1" {{ in_array(1, $weekends) ? 'selected' : '' }}>Sunday</option>
-                                    <option value="2" {{ in_array(2, $weekends) ? 'selected' : '' }}>Monday</option>
-                                    <option value="3" {{ in_array(3, $weekends) ? 'selected' : '' }}>Tuesday</option>
-                                    <option value="4" {{ in_array(4, $weekends) ? 'selected' : '' }}>Wednesday</option>
-                                    <option value="5" {{ in_array(5, $weekends) ? 'selected' : '' }}>Thursday</option>
-                                    <option value="6" {{ in_array(6, $weekends) ? 'selected' : '' }}>Friday</option>
+                                    <option value="Saturday" {{ in_array('Saturday', $weekends) ? 'selected' : '' }}>Saturday</option>
+                                    <option value="Sunday" {{ in_array('Sunday', $weekends) ? 'selected' : '' }}>Sunday</option>
+                                    <option value="Monday" {{ in_array('Monday', $weekends) ? 'selected' : '' }}>Monday</option>
+                                    <option value="Tuesday" {{ in_array('Tuesday', $weekends) ? 'selected' : '' }}>Tuesday</option>
+                                    <option value="Wednesday" {{ in_array('Wednesday', $weekends) ? 'selected' : '' }}>Wednesday</option>
+                                    <option value="Thursday" {{ in_array('Thursday', $weekends) ? 'selected' : '' }}>Thursday</option>
+                                    <option value="Friday" {{ in_array('Friday', $weekends) ? 'selected' : '' }}>Friday</option>
                                 </select>
                             </div>
                         </div>

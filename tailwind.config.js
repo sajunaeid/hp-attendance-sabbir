@@ -24,7 +24,7 @@ export default {
                 seagreen: "#15B6A4",
                 nblue: "#101827",
                 lightblack: "#52525B",
-                cream: "#EFEEEA",
+                cream: "#EFEEEA"
             },
         },
     },

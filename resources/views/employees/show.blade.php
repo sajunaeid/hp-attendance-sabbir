@@ -45,13 +45,13 @@
                             @php
                                 $weekends = json_decode($employee->we);
                             @endphp
-                            <span class="p-1 text-center {{ in_array(7, $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Saturday</span>
-                            <span class="p-1 text-center {{ in_array(1, $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Sunday</span>
-                            <span class="p-1 text-center {{ in_array(2, $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Monday</span>
-                            <span class="p-1 text-center {{ in_array(3, $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Tuesday</span>
-                            <span class="p-1 text-center {{ in_array(4, $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Wednesday</span>
-                            <span class="p-1 text-center {{ in_array(5, $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Thursday</span>
-                            <span class="p-1 text-center {{ in_array(6, $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Friday</span>
+                            <span class="p-1 text-center {{ in_array('Saturday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Saturday</span>
+                            <span class="p-1 text-center {{ in_array('Sunday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Sunday</span>
+                            <span class="p-1 text-center {{ in_array('Monday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Monday</span>
+                            <span class="p-1 text-center {{ in_array('Tuesday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Tuesday</span>
+                            <span class="p-1 text-center {{ in_array('Wednesday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Wednesday</span>
+                            <span class="p-1 text-center {{ in_array('Thursday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Thursday</span>
+                            <span class="p-1 text-center {{ in_array('Friday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Friday</span>
                         </div>
                         <p class="mt-4">Score Note : <span class="text-seagreen">{{$employee->score_note}}</span></p>
                     </div>

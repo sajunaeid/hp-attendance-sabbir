@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\Hour;
+use App\Models\Capture;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+// use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class AttendanceController extends Controller
 {
@@ -33,6 +38,7 @@ class AttendanceController extends Controller
      */
     public function store(StoreAttendanceRequest $request)
     {
+        $this->captureImage($request);
 
         // Finding the employee withe his/her employee id.
         $requestedEmployee = Employee::where('emp_id', $request->emp_number)->first();
@@ -182,6 +188,29 @@ class AttendanceController extends Controller
             ]);
         });
 
+    }
+
+
+    protected function captureImage($request){
+
+        // ................................
+        $request->validate([
+            'image' => 'required',
+        ]);
+
+        $img = $request->image;
+        $folderPath = "uploads/";
+        $image_parts = explode(";base64,", $img);
+        $image_base64 = base64_decode($image_parts[1]);
+        $fileName = uniqid() . '.png';
+        $file = $folderPath . $fileName;
+        Storage::put($file, $image_base64);
+
+        // Save image path to database
+        $capture = new Capture();
+        $capture->attendance_id = 5;
+        $capture->image = $file ;
+        $capture->save();
     }
 
 }

@@ -11,63 +11,82 @@
         {{-- Datatable css --}}
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     </x-slot>
+    <div class="">
 
-    <div class="flex gap-6">
-        <div class="basis-1/2">
-            <div class="card">
-                <div class="p-6">
-                    <h2 class="font-bold text-lg mb-2">All Present Daily</h2>
-                    <form action="" method="get" id="dailyreport">
-                        <input type="date" name="targatedDay" id="targatedDay" value="{{ $targatedDate }}" class="dark:text-gray-950">
-                    </form>
+
+        <div class="flex gap-6">
+
+            <div class="basis-1/2">
+                <div class="card">
+                    <div class="p-6">
+                        <h2 class="font-bold text-lg mb-2">All Present Daily</h2>
+                        <form action="" method="get" id="dailyreport">
+                            <input type="date" name="targatedDay" id="targatedDay" value="{{ $targatedDate }}" class="dark:text-gray-950">
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="p-6">
+                        <table id="reportTable" class="display stripe text-xs sm:text-base" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Sl</th>
+                                    <th>Name</th>
+                                    <th>ID</th>
+                                    <th>Presence</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="mb-6">
+
+                    <div class="card">
+                        <div class="p-6">
+                            <h2 class="font-bold text-lg mb-2">Employees on weekend</h2>
+                            <ul class="flex gap-6">
+                                @forelse ($employees as $employee)
+                                <li>{{$employee->name.' ('.$employee->emp_id.')'}}</li>
+                                @empty
+                                <li>No employee have weekend today</li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="p-6">
-                    <table id="reportTable" class="display stripe text-xs sm:text-base" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Sl</th>
-                                <th>Name</th>
-                                <th>ID</th>
-                                <th>Presence</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                    </table>
+
+            {{-- Daily scans --}}
+            <div class="basis-1/2">
+                <div class="card">
+                    <div class="p-6">
+                        <h2 class="font-bold text-lg mb-2">Daily Scans</h2>
+                        <form action="" method="get" id="dailyscanreport">
+                            <input type="date" name="scanedDay" id="scanedDay" value="{{ $targatedDate }}" class="dark:text-gray-950">
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="p-6">
+                        <table id="scanTable" class="display stripe text-xs sm:text-base" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Sl</th>
+                                    <th>Name</th>
+                                    <th>Scan Type</th>
+                                    <th>Scan Time</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-
-
-        {{-- Daily scans --}}
-        <div class="basis-1/2">
-            <div class="card">
-                <div class="p-6">
-                    <h2 class="font-bold text-lg mb-2">Daily Scans</h2>
-                    <form action="" method="get" id="dailyscanreport">
-                        <input type="date" name="scanedDay" id="scanedDay" value="{{ $targatedDate }}" class="dark:text-gray-950">
-                    </form>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="p-6">
-                    <table id="scanTable" class="display stripe text-xs sm:text-base" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Sl</th>
-                                <th>Name</th>
-                                <th>Scan Type</th>
-                                <th>Scan Time</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div> <!-- flex-end -->
+        </div> <!-- flex-end -->
+    </div>
 
 
 

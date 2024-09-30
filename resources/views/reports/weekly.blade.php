@@ -25,6 +25,7 @@
                             <th>Name</th>
                             <th>ID</th>
                             <th>Working Hour</th>
+                            <th>Should worked</th>
                             <th>Worked</th>
                         </tr>
                     </thead>
@@ -45,6 +46,7 @@
                             <th>Name</th>
                             <th>ID</th>
                             <th>Working Hour</th>
+                            <th>Should worked</th>
                             <th>Worked</th>
                         </tr>
                     </thead>
@@ -94,11 +96,23 @@
                             name: 'wh'
                         },
                         {
+                            data: null,
+                            render: function (data) {
+                                const weekendString = data.we;
+                                const cleanedString = weekendString.replace(/[\[\]"]/g, '');
+                                const weekendArray = cleanedString.split(',');
+                                const numberOfElements = weekendArray.length;
+                                return data.wh*numberOfElements+' hr';
+                            }
+                        },
+                        {
                             data: 'total_wh_time',
                             name: 'total_wh_time'
                         }
                     ]
                 });
+
+
                 var lastweek = $('#lastweekreportTable').DataTable({
                     dom: 'Bfrtip',
                     processing: true,
@@ -124,6 +138,16 @@
                         {
                             data: 'wh',
                             name: 'wh'
+                        },
+                        {
+                            data: null,
+                            render: function (data) {
+                                const weekendString = data.we;
+                                const cleanedString = weekendString.replace(/[\[\]"]/g, '');
+                                const weekendArray = cleanedString.split(',');
+                                const numberOfElements = weekendArray.length;
+                                return data.wh*numberOfElements+' hr';
+                            }
                         },
                         {
                             data: 'total_wh_time',

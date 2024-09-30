@@ -10,13 +10,16 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
+        <link rel="icon" type="image/png" href="{{asset('favicon.png')}}">
+
         {{-- Datatable css --}}
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="antialiased">
+    <body class="antialiased relative">
         <div class="flex sm:justify-between items-center">
             <div class="flex justify-center items-center p-4">
                 <img src="{{asset('hp.svg')}}" alt="Hamneman Pharmacy" srcset="" class="h-10 sm:h-16">
@@ -67,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="basis-1/2 sm:flex sm:justify-center sm:items-center bg-dots-darker bg-center dark:bg-dots-lighter  selection:bg-red-500 selection:text-white">
+            <div class="basis-1/2 sm:flex sm:justify-center sm:items-center bg-dots-darker bg-center dark:bg-dots-lighter  selection:bg-red-500 selection:text-white ">
 
 
                 <div class="p-6 lg:p-8">
@@ -82,22 +85,26 @@
                                 <p>Please Scan your ID Before entering or leaving</p>
                                 <p class="text-red-700">You can only scan after 9 am and before 10pm</p>
                             </div>
-                                <h2 class="my-6 text-xl font-bold text-red-700 text-center min-h-18" >Scan Your ID Card</h2>
-                                <h2 class="my-24 text-2xl font-bold text-center hidden" id="message"></h2>
+                                <h2 class="mt-6 text-xl font-bold text-red-700 text-center min-h-18" >Scan Your ID Card</h2>
+                                <h2 class="my-24 text-2xl font-bold text-center absolute bg-teal-500/10 px-4 py-2 rounded-full top-8 right-6 hidden" id="message"></h2>
 
                         </div>
                     </div>
 
 
                     <div class="mt-2 0opacity-0">
-                        <div class="flex justify-center items-center mx-auto max-w-2xl p-6">
-                            <form action="{{route('attendences.store')}}" method="post" id="idCardScanForm">
+                        <div class="flex justify-center items-center mx-auto max-w-2xl px-6 pb-6">
+                            <form action="{{route('attendences.store')}}" method="post" id="idCardScanForm" enctype="multipart/form-data">
                                 @csrf
-                                <input type="text" name="emp_number" id="emp_number_input" autofocus >
-                                <div class="lg:col-span-2 mt-3 hidden">
+                                <div id="my_camera"></div>
+                                <br>
+                                <input type="text" name="emp_number" id="emp_number_input" class="w-full" autofocus >
+                                <input type="hidden" name="image" id="image">
+                                <div class="lg:col-span-2 mt-3">
                                     <button type="submit"
                                         class="font-mont mt-8 px-10 py-4 bg-black text-white font-semibold text-xs uppercase tracking-widest transition ease-in-out duration-150 relative after:absolute after:content-['SURE!'] after:flex after:justify-center after:items-center after:text-white after:w-full after:h-full after:z-10 after:top-full after:left-0 after:bg-seagreen overflow-hidden hover:after:top-0 after:transition-all after:duration-300">Save</button>
-                                </div> <!-- end button -->
+                                </div>
+
                             </form>
                         </div>
                     </div>
@@ -119,6 +126,7 @@
         <script src="{{asset('adminto/libs/jquery/jquery.min.js')}}"></script>
         <!-- Datatable script-->
         <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
         <script>
             // Ajax csrf token
             $.ajaxSetup({
@@ -127,6 +135,7 @@
                 }
             });
             var element = $('#scanNotification');
+
 
             $(document).ready(function () {
                 var datatablelist = null;
@@ -188,7 +197,24 @@
                     ]
                 });
 
-                $('#emp_number_input').change(function() {
+
+
+                const idInput = $('#emp_number_input');
+
+                // Configure the webcam
+                Webcam.set({
+                    width: 320,
+                    height: 240,
+                    image_format: 'jpeg',
+                    jpeg_quality: 90
+                });
+
+                Webcam.attach('#my_camera');
+
+
+                // .......................................
+
+                idInput.change(function() {
                     // Trigger form submission when the input value changes
                     var inputValue = $(this).val();
                     if (inputValue.length >= 9) {
@@ -200,53 +226,98 @@
                 $('form#idCardScanForm').submit(function(event) {
                     event.preventDefault(); // Prevent default form submission
 
-                    var form = $(this);
-                    var formData = new FormData(form[0]); // Serialize form data
-                    var submitButton = form.find(':submit');
-                    var messageElement = $('#message');
 
-                    submitButton.prop('disabled', true); // Disable submit button during AJAX request
+                    $('form#idCardScanForm').submit();
 
-                    $.ajax({
-                        type: 'POST',
-                        url: form.attr('action'), // Use form's action attribute
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        dataType: 'json',
-                        beforeSend: function() {
-                            // Optionally, you can show a loading spinner or message here
-                        },
-                        success: function(response) {
-                            // Handle success response
-                            messageElement.removeClass('text-red-500 text-green-500').addClass(response.mode == 1 ? 'text-green-500' : 'text-red-500').text(response.message).fadeIn();
+                    // var form = $(this);
+                    // var formData = new FormData(form[0]);
+                    // var submitButton = form.find(':submit');
+                    // var messageElement = $('#message');
 
-                            // Optionally, update datatable
-                            datatablelist.draw();
 
-                            form[0].reset(); // Reset form
+                    // // Function to capture the image
+                    // function take_snapshot() {
+                    //     Webcam.snap(function (data_uri) {
+                    //         $('#image').val() = data_uri;
+                    //     });
+                    // }
 
-                            setTimeout(function() {
-                                messageElement.fadeOut().text('');
-                            }, 5000);
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                            messageElement.removeClass('text-red-500 text-green-500').addClass(response.mode == 1 ? 'text-green-500' : 'text-red-500').text('Something went wrong. Please try again.').fadeIn();
+                    // submitButton.prop('disabled', true); // Disable submit button during AJAX request
 
-                            form[0].reset(); // Reset form
+                    // $.ajax({
+                    //     type: 'POST',
+                    //     url: form.attr('action'), // Use form's action attribute
+                    //     data: formData,
+                    //     processData: false,
+                    //     contentType: false,
+                    //     dataType: 'json',
+                    //     beforeSend: function() {
+                    //         // Optionally, you can show a loading spinner or message here
+                    //     },
+                    //     success: function(response) {
+                    //         // Handle success response
+                    //         messageElement.removeClass('text-red-500 text-green-500').addClass(response.mode == 1 ? 'text-green-500' : 'text-red-500').text(response.message).fadeIn();
 
-                            setTimeout(function() {
-                                messageElement.fadeOut();
-                            }, 5000);
-                        },
-                        complete: function() {
-                            submitButton.prop('disabled', false); // Re-enable submit button
-                        }
-                    });
+                    //         // Optionally, update datatable
+                    //         datatablelist.draw();
+
+                    //         form[0].reset(); // Reset form
+
+                    //         setTimeout(function() {
+                    //             messageElement.fadeOut().text('');
+                    //         }, 5000);
+                    //     },
+                    //     error: function(xhr, status, error) {
+                    //         console.error(xhr.responseText);
+                    //         messageElement.removeClass('text-red-500 text-green-500').addClass(response.mode == 1 ? 'text-green-500' : 'text-red-500').text('Something went wrong. Please try again.').fadeIn();
+
+                    //         form[0].reset(); // Reset form
+
+                    //         setTimeout(function() {
+                    //             messageElement.fadeOut();
+                    //         }, 5000);
+                    //     },
+                    //     complete: function() {
+                    //         submitButton.prop('disabled', false); // Re-enable submit button
+                    //     }
+                    // });
                 });
 
             });
+
+
+
+
+
+
+            // Capture photo
+            // ID card scan/ photo click demo
+
+            const captureBtn = $('#capture-btn');
+
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    webcam.srcObject = stream;
+                    $(webcam).show();
+                })
+                .catch(function(err) {
+                    console.error('Error accessing webcam: ', err);
+                });
+
+            captureBtn.on('click', function() {
+                const idValue = idInput.val().trim();
+
+                if (idValue !== '') {
+
+
+
+                    idInput.val('');
+                } else {
+                    alert('Please enter or scan an ID number.');
+                }
+            });
+
         </script>
     </body>
 </html>

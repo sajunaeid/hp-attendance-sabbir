@@ -47,7 +47,12 @@
                     </li>
                     <li class="menu-item">
                         <a href="{{route('employees.we')}}" class="menu-link">
-                            <span class="menu-text">Worke Days</span>
+                            <span class="menu-text">Work Days</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('employees.old')}}" class="menu-link">
+                            <span class="menu-text">Old Employees</span>
                         </a>
                     </li>
                 </ul>

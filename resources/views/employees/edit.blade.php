@@ -63,11 +63,11 @@
 
 
                             <div class="flex-grow">
-                                <label for="we" class="block mb-2">Working Hour</label>
+                                <label for="we" class="block mb-2">Weekend</label>
                                 @php
-                                    $weekends = json_decode($employee->we);
+                                    $weekends = json_decode($employee->we) ?? [];
                                 @endphp
-                                <select class="form-input text-gray-900 dark:text-gray-900" name="we[]" multiple id="we">
+                                <select class="border border-nblue text-gray-900 dark:text-gray-900" name="we[]" multiple id="we" style="">
                                     <option value="Saturday" {{ in_array('Saturday', $weekends) ? 'selected' : '' }}>Saturday</option>
                                     <option value="Sunday" {{ in_array('Sunday', $weekends) ? 'selected' : '' }}>Sunday</option>
                                     <option value="Monday" {{ in_array('Monday', $weekends) ? 'selected' : '' }}>Monday</option>

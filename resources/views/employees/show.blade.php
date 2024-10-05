@@ -43,7 +43,7 @@
                     <div class=" basis-1/4">
                         <div class="grid grid-cols-3 gap-1">
                             @php
-                                $weekends = json_decode($employee->we);
+                                $weekends = json_decode($employee->we) ?? [];
                             @endphp
                             <span class="p-1 text-center {{ in_array('Saturday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Saturday</span>
                             <span class="p-1 text-center {{ in_array('Sunday', $weekends) ? 'bg-red-400' : 'bg-green-400' }}">Sunday</span>
@@ -93,14 +93,17 @@
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="">{{$document->docname}}</h3>
                             <div class="flex gap-2">
-                                <form action="{{route('documents.destroy', $document)}}" method="DELETE">
-                                    @csrf
-                                    @method('DELETE')
+                                <div class="">
 
-                                    <button type="submit"  class="text-red-500/70 hover:text-red  hover:scale-105 transition duration-150 ease-in-out text-xl bg-gray-100 rounded-md p-1 aspect-square flex justify-center items-center" >
-                                        <span class="menu-icon"><i class="mdi mdi-delete"></i></span>
-                                    </button>
-                                </form>
+                                    <form action="{{route('documents.destroy', $document)}}" method="DELETE">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit"  class="text-red-500/70 hover:text-red  hover:scale-105 transition duration-150 ease-in-out text-xl bg-gray-100 rounded-md p-1 aspect-square flex justify-center items-center" >
+                                            <span class="menu-icon"><i class="mdi mdi-delete"></i></span>
+                                        </button>
+                                    </form>
+                                </div>
 
 
                                 <a href="{{route('documents.show',$document)}}">

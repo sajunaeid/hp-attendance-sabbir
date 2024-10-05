@@ -38,7 +38,7 @@ class AttendanceController extends Controller
      */
     public function store(StoreAttendanceRequest $request)
     {
-        $this->captureImage($request);
+
 
         // Finding the employee withe his/her employee id.
         $requestedEmployee = Employee::where('emp_id', $request->emp_number)->first();
@@ -71,7 +71,7 @@ class AttendanceController extends Controller
 
             if (!$previousScanToday) {
                 // If he didn't scan any today
-                $this->inentry($requestedEmployee, $carbonated);
+                $this->inentry($requestedEmployee, $carbonated,$request);
                 return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
             } else {
 
@@ -97,18 +97,17 @@ class AttendanceController extends Controller
                         $mn = $minutesDifference % 60;
                         $timeString = strval($hr).':'.strval($mn).':00';
                         // Convert the string to a Carbon instance
-                        $workedHour = Carbon::create(0, 0, 0, $hr, $mn, 0)->format('H:i:s');;
-                        // $workedHour = Carbon::createFromFormat('H:i:s', $timeString);
+                        $workedHour = Carbon::create(0, 0, 0, $hr, $mn, 0)->format('H:i:s');
 
 
+                        $attendance = new Attendance;
+                        $attendance->employee_id = $requestedEmployee->id;
+                        $attendance->scan_type = 2;
+                        $attendance->scan_time = $carbonated;
+                        $attendance->save();
 
-                        DB::transaction(function () use ($requestedEmployee, $carbonated){
-                            Attendance::create([
-                                'employee_id' => $requestedEmployee->id,
-                                'scan_type' => 2,
-                                'scan_time' => $carbonated,
-                            ]);
-                        });
+
+                        $this->captureImage($request,$attendance);
 
                         $empHour->wh_time = $workedHour;
                         $empHour->update();
@@ -117,7 +116,7 @@ class AttendanceController extends Controller
                         return response()->json(['message' => $requestedEmployee->name.' OUT.', 'mode' => 2]);
                     }else {
 
-                        $this->inentry($requestedEmployee, $carbonated);
+                        $this->inentry($requestedEmployee, $carbonated,$request);
                         return response()->json(['message' => $requestedEmployee->name.' IN.', 'mode' => 1]);
                     }
                 }
@@ -161,37 +160,45 @@ class AttendanceController extends Controller
         //
     }
 
-    protected function inentry($requestedEmployee,$carbonated){
-        DB::transaction(function () use ($requestedEmployee, $carbonated){
-            Attendance::create([
-                'employee_id' => $requestedEmployee->id,
-                'scan_type' => 1,
-                'scan_time' => $carbonated,
-            ]);
+    protected function inentry($requestedEmployee,$carbonated,$request){
+        DB::transaction(function () use ($requestedEmployee, $carbonated,$request){
+            // $attendence = Attendance::create([
+            //     'employee_id' => $requestedEmployee->id,
+            //     'scan_type' => 1,
+            //     'scan_time' => $carbonated,
+            // ]);
 
-            Hour::create([
+            $attendance = new Attendance;
+            $attendance->employee_id = $requestedEmployee->id;
+            $attendance->scan_type = 1;
+            $attendance->scan_time = $carbonated;
+            $attendance->save();
+
+            $hour= Hour::create([
                 'employee_id' => $requestedEmployee->id,
                 'in_time' => $carbonated,
             ]);
+
+            $this->captureImage($request,$attendance);
         });
     }
 
 
-    protected function createAttendance($employeeId, $scanType, $scanTime)
+    protected function createAttendance($employeeId, $scanType, $scanTime, $request)
     {
-        DB::transaction(function ($employeeId, $scanType, $scanTime) {
-
-            $attendance = Attendance::create([
-                'employee_id' => $employeeId,
-                'scan_type' => $scanType,
-                'scan_time' => $scanTime,
-            ]);
+        DB::transaction(function ($employeeId, $scanType, $scanTime,$request) {
+            $attendance = new Attendance;
+            $attendance->employee_id = $employeeId;
+            $attendance->scan_type = $scanType;
+            $attendance->scan_time = $scanTime;
+            $attendance->save();
+            $this->captureImage($request,$attendance);
         });
 
     }
 
 
-    protected function captureImage($request){
+    protected function captureImage($request,$attendance){
 
         // ................................
         $request->validate([
@@ -199,7 +206,7 @@ class AttendanceController extends Controller
         ]);
 
         $img = $request->image;
-        $folderPath = "uploads/";
+        $folderPath = "public/capture";
         $image_parts = explode(";base64,", $img);
         $image_base64 = base64_decode($image_parts[1]);
         $fileName = uniqid() . '.png';
@@ -208,9 +215,23 @@ class AttendanceController extends Controller
 
         // Save image path to database
         $capture = new Capture();
-        $capture->attendance_id = 5;
-        $capture->image = $file ;
+        $capture->attendance_id = $attendance->id;
+        $capture->image = $fileName;
         $capture->save();
+
+
+        // **Step 1: Find and delete records older than 10 days**
+        $tenDaysAgo = Carbon::now()->subDays(10);
+        // Fetch captures older than 10 days
+        $oldCaptures = Capture::where('created_at', '<', $tenDaysAgo)->get();
+        foreach ($oldCaptures as $oldCapture) {
+            // **Step 2: Delete the file from storage**
+            if (Storage::exists($oldCapture->image)) {
+                Storage::delete($oldCapture->image); // This will unlink the file
+            }
+            // **Step 3: Delete the record from the database**
+            $oldCapture->delete();
+        }
     }
 
 }

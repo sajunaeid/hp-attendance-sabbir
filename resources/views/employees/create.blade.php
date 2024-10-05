@@ -28,12 +28,12 @@
 
                         <div>
                             <label for="phone" class="block mb-2">Phone</label>
-                            <input type="text" class="form-input" id="phone" name="phone" required>
+                            <input type="text" class="form-input" id="phone" name="phone" >
                         </div> <!-- end -->
 
                         <div>
                             <label for="nid" class="block mb-2">NID</label>
-                            <input type="text" class="form-input" id="nid" name="nid" required>
+                            <input type="text" class="form-input" id="nid" name="nid" >
                         </div> <!-- end -->
 
                         <div>
@@ -71,12 +71,12 @@
 
                         <div>
                             <label for="score" class="block mb-2">Score</label>
-                            <input type="text" class="form-input" id="score" name="score" required>
+                            <input type="text" class="form-input" id="score" name="score" >
                         </div> <!-- end -->
 
                         <div>
                             <label for="score_note" class="block mb-2">Score Note</label>
-                            <textarea class="form-input" id="score_note" name="score_note" required rows="1"> </textarea>
+                            <textarea class="form-input" id="score_note" name="score_note" rows="1"> </textarea>
                         </div> <!-- end -->
 
                         <div>

@@ -67,9 +67,15 @@ class Kernel extends HttpKernel
     ];
 
 
+    // protected $routeMiddleware = [
+    //     'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+    //     'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+    //     'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+    // ];
+
     protected $routeMiddleware = [
-        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
     ];
 }

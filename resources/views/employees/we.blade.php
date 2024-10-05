@@ -21,7 +21,7 @@
                         <tr>
                             <td>{{$employee->name}}</td>
                             @php
-                                $weekends = json_decode($employee->we);
+                                $weekends = json_decode($employee->we) ?? [];
                             @endphp
                             <td class="p-1 text-center {{ in_array('Saturday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Saturday') border-dashed border-2 border-sky-500  @endif">Saturday</td>
                             <td class="p-1 text-center {{ in_array('Sunday', $weekends) ? 'bg-red-400' : 'bg-green-400' }} @if($currentDay == 'Sunday') border-dashed border-2 border-sky-500  @endif">Sunday</td>

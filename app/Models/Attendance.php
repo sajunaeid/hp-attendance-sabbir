@@ -23,7 +23,7 @@ class Attendance extends Model
     ];
 
 
-    protected $with = ['employee'];
+    protected $with = ['employee','capture'];
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'id');
@@ -31,6 +31,11 @@ class Attendance extends Model
         // foreign id is the post table which is inside comment table such as: post_id
         // return $this->hasMany(Comment::class, 'post_id', 'id');
         // return $this->hasMany(Comment::class, 'post_id');
+    }
+
+    public function capture()
+    {
+        return $this->hasOne(Capture::class);
     }
 
 }

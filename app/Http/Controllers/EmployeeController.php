@@ -81,17 +81,56 @@ class EmployeeController extends Controller
 
         // return $request;
 
-        $employee = Employee::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'nid' => $request->nid,
-            'emp_id' => $request->emp_id,
-            'emp_number' => $request->emp_number,
-            'wh' => $request->wh,
-            'score' => $request->score,
-            'score_note' => $request->score_note,
-            'we' => json_encode($request->we),
-        ]);
+        $employee = new Employee;
+        if ($request->has('name')) {
+            $employee->name = $request->name;
+        }
+
+        if ($request->has('phone')) {
+            $employee->phone = $request->phone;
+        }
+
+        if ($request->has('nid')) {
+            $employee->nid = $request->nid;
+        }
+
+        if ($request->emp_id) {
+            $employee->emp_id = $request->emp_id;
+        }
+
+        if ($request->emp_number) {
+            $employee->emp_number = $request->emp_number; // Note: Fixed typo from 'emp_nuber'
+        }
+
+        if ($request->wh) {
+            $employee->wh = $request->wh;
+        }
+
+        if ($request->score) {
+            $employee->score = $request->score;
+        }else{
+            $employee->score = 0;
+        }
+
+        if ($request->has('score_note')) {
+            $employee->score_note = $request->score_note;
+        }
+
+        if ($request->has('we')) {
+            $employee->we = json_encode($request->we);
+        }
+        $employee->save();
+        // $employee = Employee::create([
+        //     'name' => $request->name,
+        //     'phone' => $request->phone,
+        //     'nid' => $request->nid,
+        //     'emp_id' => $request->emp_id,
+        //     'emp_number' => $request->emp_number,
+        //     'wh' => $request->wh,
+        //     'score' => $request->score,
+        //     'score_note' => $request->score_note,
+        //     'we' => json_encode($request->we),
+        // ]);
 
         return redirect()->route('employees.index')->with(['status' => 200, 'message' => 'Employee Created!']);
 

@@ -27,6 +27,7 @@ class HomeController extends Controller
 
     public function dashboard(Request $request)
     {
+        
         $today = Carbon::now()->format('l');
         $employeesWithWeekendToday = Employee::whereJsonContains('we', $today)->get();
         $targatedDate = now()->toDateString();

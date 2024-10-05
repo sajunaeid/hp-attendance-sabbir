@@ -30,6 +30,7 @@
                             <th>ID</th>
                             <th>Working Hour</th>
                             <th>Worked</th>
+                            <th>Target</th>
                         </tr>
                     </thead>
                 </table>
@@ -89,12 +90,18 @@
                             name: 'emp_id'
                         },
                         {
-                            data: 'wh',
-                            name: 'wh'
+                            data: null,
+                            render: function(data) {
+                                return data.wh+' hr';
+                            }
                         },
                         {
                             data: 'total_wh_time',
                             name: 'total_wh_time'
+                        },
+                        {
+                            data: 'target',
+                            name: 'target'
                         }
                     ]
                 });

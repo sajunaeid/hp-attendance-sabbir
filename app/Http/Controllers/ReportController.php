@@ -18,36 +18,56 @@ class ReportController extends Controller
      */
     public function daily(Request $request)
     {
+
         if ($request->targatedDay) {
             $targatedDate = $request->targatedDay;
-        }else{
-            $targatedDate = now()->toDateString();
+        } else {
+            $targatedDate = Carbon::today();
         }
 
         if ($request->ajax()) {
-
             return DataTables::of(Employee::query())
-            ->addColumn('total_wh_time', function ($employee) use ($targatedDate){
+                ->addColumn('total_wh_time', function ($employee) use ($targatedDate) {
+                    $totalWorkedSeconds = $employee->hours()
+                        ->whereDate('created_at', $targatedDate)
+                        ->get()
+                        ->reduce(function ($total, $hour) {
+                            // Assuming `wh_time` is stored as "HH:MM:SS"
+                            list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                            $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                            return $total + $secondsFromTime;
+                        }, 0);
 
-                $totalworkedHour = $employee->hours()
-                ->whereDate('created_at', $targatedDate  )
-                ->sum('wh_time');
+                    if ($totalWorkedSeconds == 0) {
+                        return '00 min';
+                    }
 
-                if ($totalworkedHour == 0) {
-                    return '00:00:00';
-                } else {
-                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
-                    $outputString = substr_replace($outputString, ':', -2, 0);
-                    return $outputString ;
-                }
+                    // Convert total seconds to HH:MM:SS format
+                    $hours = floor($totalWorkedSeconds / 3600);
+                    $minutes = floor(($totalWorkedSeconds % 3600) / 60);
+                    $seconds = $totalWorkedSeconds % 60;
 
-            })
-            ->rawColumns(['total_wh_time'])
-            ->make(true);
+                    return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
+                })
+                ->addColumn('target', function ($employee) use ($targatedDate) {
+
+                    // return var_dump($employee->we);
+
+                    $carbonDate = Carbon::parse($targatedDate);
+                    $dayOfWeek = $carbonDate->format('l');
+                    $weekends = json_decode($employee->we);
+                    if ($employee->we && in_array($dayOfWeek,$weekends)) {
+                        return "Weekend";
+                    }
+                    return $employee->wh." hr";
+                })
+                ->rawColumns(['total_wh_time','target'])
+                ->make(true);
         }
-        return view('reports.daily',['targatedDate'=>$targatedDate]);
 
+        return view('reports.daily', ['targatedDate' => $targatedDate]);
     }
+
 
 
     /**
@@ -61,7 +81,7 @@ class ReportController extends Controller
         if ($request->ajax()) {
 
             return DataTables::of(
-                Attendance::with('employee')->whereDate('created_at', $targatedDate)->latest()->take(5)->get()
+                Attendance::with(['employee','capture'])->whereDate('created_at', $targatedDate)->latest()->take(5)->orderBy('id', 'ASC')
             )
             ->make(true);
         }
@@ -74,12 +94,16 @@ class ReportController extends Controller
     public function dailyscan(Request $request)
     {
 
-        $targatedDate = now()->toDateString();
+        if ($request->targatedDay) {
+            $targatedDate = $request->targatedDay;
+        } else {
+            $targatedDate = Carbon::today();
+        }
 
         if ($request->ajax()) {
 
             return DataTables::of(
-                Attendance::with('employee')->whereDate('created_at', $targatedDate)->latest()->get()
+                Attendance::with(['employee','capture'])->whereDate('created_at', $targatedDate)->latest()->orderBy('id', 'ASC')
             )
             ->make(true);
         }
@@ -154,20 +178,27 @@ class ReportController extends Controller
         if ($request->ajax()) {
 
             return DataTables::of(Employee::query())
-            ->addColumn('total_wh_time', function ($employee) use ($startOfThisWeek,$endOfThisWeek){
-                $totalworkedHour = $employee->hours()
-                    // ->whereDate('created_at', $targatedDate  )
-                    ->whereBetween('created_at', [$startOfThisWeek, $endOfThisWeek])
-                    ->sum('wh_time');
+            ->addColumn('total_wh_time', function ($employee) use ($startOfThisWeek,$endOfThisWeek) {
+                $totalWorkedSeconds = $employee->hours()
+                ->whereBetween('created_at',  [$startOfThisWeek, $endOfThisWeek])
+                    ->get()
+                    ->reduce(function ($total, $hour) {
+                        // Assuming `wh_time` is stored as "HH:MM:SS"
+                        list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                        $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                        return $total + $secondsFromTime;
+                    }, 0);
 
-
-                if ($totalworkedHour == 0) {
-                    return '00:00:00';
-                } else {
-                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
-                    $outputString = substr_replace($outputString, ':', -2, 0);
-                    return $outputString ;
+                if ($totalWorkedSeconds == 0) {
+                    return '00 min';
                 }
+
+                // Convert total seconds to HH:MM:SS format
+                $hours = floor($totalWorkedSeconds / 3600);
+                $minutes = floor(($totalWorkedSeconds % 3600) / 60);
+                $seconds = $totalWorkedSeconds % 60;
+
+                return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -185,20 +216,27 @@ class ReportController extends Controller
         if ($request->ajax()) {
 
             return DataTables::of(Employee::query())
-            ->addColumn('total_wh_time', function ($employee) use ($startOfLastWeek,$endOfLastWeek){
-                $totalworkedHour = $employee->hours()
-                    // ->whereDate('created_at', $targatedDate  )
-                    ->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])
-                    ->sum('wh_time');
+            ->addColumn('total_wh_time', function ($employee) use ($startOfLastWeek,$endOfLastWeek) {
+                $totalWorkedSeconds = $employee->hours()
+                ->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])
+                    ->get()
+                    ->reduce(function ($total, $hour) {
+                        // Assuming `wh_time` is stored as "HH:MM:SS"
+                        list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                        $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                        return $total + $secondsFromTime;
+                    }, 0);
 
-
-                if ($totalworkedHour == 0) {
-                    return '00:00:00';
-                } else {
-                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
-                    $outputString = substr_replace($outputString, ':', -2, 0);
-                    return $outputString ;
+                if ($totalWorkedSeconds == 0) {
+                    return '00 min';
                 }
+
+                // Convert total seconds to HH:MM:SS format
+                $hours = floor($totalWorkedSeconds / 3600);
+                $minutes = floor(($totalWorkedSeconds % 3600) / 60);
+                $seconds = $totalWorkedSeconds % 60;
+
+                return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -221,18 +259,27 @@ class ReportController extends Controller
         if ($request->ajax()) {
 
             return DataTables::of(Employee::query())
-            ->addColumn('total_wh_time', function ($employee) use ($targatedMonth){
-                $totalworkedHour = $employee->hours()
-                    ->whereMonth('created_at', $targatedMonth)
-                    ->sum('wh_time');
+            ->addColumn('total_wh_time', function ($employee) use ($targatedMonth) {
+                $totalWorkedSeconds = $employee->hours()
+                ->whereMonth('created_at', $targatedMonth)
+                    ->get()
+                    ->reduce(function ($total, $hour) {
+                        // Assuming `wh_time` is stored as "HH:MM:SS"
+                        list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                        $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                        return $total + $secondsFromTime;
+                    }, 0);
 
-                if ($totalworkedHour == 0) {
-                    return '00:00:00';
-                } else {
-                    $outputString = substr_replace($totalworkedHour, ':', -4, 0);
-                    $outputString = substr_replace($outputString, ':', -2, 0);
-                    return $outputString ;
+                if ($totalWorkedSeconds == 0) {
+                    return '00 min';
                 }
+
+                // Convert total seconds to HH:MM:SS format
+                $hours = floor($totalWorkedSeconds / 3600);
+                $minutes = floor(($totalWorkedSeconds % 3600) / 60);
+                $seconds = $totalWorkedSeconds % 60;
+
+                return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);
@@ -244,40 +291,84 @@ class ReportController extends Controller
     }
 
 
-    public function yearly (Request $request)
-    {
+    // public function yearly (Request $request)
+    // {
 
+    //     $targatedYear = now()->year;
+    //     // var_dump($targatedYear);
+    //     // return $targatedYear;
+
+    //     if ($request->targatedYear) {
+    //         $targatedYear = $request->targatedYear;
+    //     }
+
+    //     if ($request->ajax()) {
+
+    //         return DataTables::of(Employee::query())
+    //         ->addColumn('total_wh_time', function ($employee) use ($targatedYear){
+    //             $totalworkedHour = $employee->hours()
+    //                 ->whereYear('created_at', $targatedYear)
+    //                 ->sum('wh_time');
+
+    //                 if ($totalworkedHour == 0) {
+    //                     return '00:00:00';
+    //                 } else {
+    //                     $outputString = substr_replace($totalworkedHour, ':', -4, 0);
+    //                     $outputString = substr_replace($outputString, ':', -2, 0);
+    //                     return $outputString ;
+    //                 }
+    //         })
+    //         ->rawColumns(['total_wh_time'])
+    //         ->make(true);
+    //     }
+
+    //     return view('reports.yearly');
+
+    // }
+
+
+
+
+
+    public function yearly(Request $request)
+    {
         $targatedYear = now()->year;
-        // var_dump($targatedYear);
-        // return $targatedYear;
 
         if ($request->targatedYear) {
             $targatedYear = $request->targatedYear;
         }
 
         if ($request->ajax()) {
-
             return DataTables::of(Employee::query())
-            ->addColumn('total_wh_time', function ($employee) use ($targatedYear){
-                $totalworkedHour = $employee->hours()
+                ->addColumn('total_wh_time', function ($employee) use ($targatedYear) {
+                    $totalWorkedSeconds = $employee->hours()
                     ->whereYear('created_at', $targatedYear)
-                    ->sum('wh_time');
+                        ->get()
+                        ->reduce(function ($total, $hour) {
+                            // Assuming `wh_time` is stored as "HH:MM:SS"
+                            list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                            $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                            return $total + $secondsFromTime;
+                        }, 0);
 
-                    if ($totalworkedHour == 0) {
-                        return '00:00:00';
-                    } else {
-                        $outputString = substr_replace($totalworkedHour, ':', -4, 0);
-                        $outputString = substr_replace($outputString, ':', -2, 0);
-                        return $outputString ;
+                    if ($totalWorkedSeconds == 0) {
+                        return '00 min';
                     }
-            })
-            ->rawColumns(['total_wh_time'])
-            ->make(true);
+
+                    // Convert total seconds to HH:MM:SS format
+                    $hours = floor($totalWorkedSeconds / 3600);
+                    $minutes = floor(($totalWorkedSeconds % 3600) / 60);
+                    $seconds = $totalWorkedSeconds % 60;
+
+                    return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
+                })
+                ->rawColumns(['total_wh_time'])
+                ->make(true);
         }
 
         return view('reports.yearly');
-
     }
+
 
 
     public function range(Request $request)
@@ -293,18 +384,27 @@ class ReportController extends Controller
             }
             return DataTables::of(Employee::query())
             ->addColumn('total_wh_time', function ($employee) use ($startOfThisWeek,$endOfThisWeek){
-                $totalworkedHour = $employee->hours()
+                    $totalWorkedSeconds = $employee->hours()
                     // ->whereDate('created_at', $targatedDate  )
                     ->whereBetween('created_at', [$startOfThisWeek, $endOfThisWeek])
-                    ->sum('wh_time');
+                    ->get()
+                    ->reduce(function ($total, $hour) {
+                        // Assuming `wh_time` is stored as "HH:MM:SS"
+                        list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                        $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                        return $total + $secondsFromTime;
+                    }, 0);
 
-                    if ($totalworkedHour == 0) {
-                        return '00:00:00';
-                    } else {
-                        $outputString = substr_replace($totalworkedHour, ':', -4, 0);
-                        $outputString = substr_replace($outputString, ':', -2, 0);
-                        return $outputString ;
+                    if ($totalWorkedSeconds == 0) {
+                        return '00 min';
                     }
+
+                    // Convert total seconds to HH:MM:SS format
+                    $hours = floor($totalWorkedSeconds / 3600);
+                    $minutes = floor(($totalWorkedSeconds % 3600) / 60);
+                    $seconds = $totalWorkedSeconds % 60;
+
+                    return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
             })
             ->rawColumns(['total_wh_time'])
             ->make(true);

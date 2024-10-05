@@ -92,8 +92,10 @@
                             name: 'emp_id'
                         },
                         {
-                            data: 'wh',
-                            name: 'wh'
+                            data: null,
+                            render: function(data) {
+                                return data.wh+' hr';
+                            }
                         },
                         {
                             data: null,

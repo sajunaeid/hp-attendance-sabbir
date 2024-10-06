@@ -94,7 +94,7 @@
         <div class="basis-1/2 bg-dots-darker bg-center dark:bg-dots-lighter  selection:bg-red-500 selection:text-white ">
             <div class="card bg-gray-100 rounded-md px-6 lg:px-8">
                 {{-- form and camera --}}
-                <div class="p-6 opacity-0">
+                <div class="p-6">
                     <div class="flex justify-center items-center mx-auto max-w-2xl px-6 pb-6">
                         <form action="{{ route('attendences.store') }}" method="post" id="idCardScanForm"
                             enctype="multipart/form-data">

@@ -57,12 +57,26 @@
             @endif
         </div>
     </div>
-    <div class="flex flex-col-reverse sm:flex-row">
-        <div class="basis-1/2 p-6 flex items-center justify-center">
-            <div class="card bg-gray-100 rounded-md">
+    {{-- Welcome div --}}
+    <div class="">
+        {{-- welcome div --}}
+        <div class="px-6 flex justify-center items-center mx-auto max-w-2xl">
+            <div class=" motion-safe:hover:scale-[1.01] transition-all duration-250">
+                <div class="text-center">
+                    <h2 class="text-5xl font-bold text-red-700 ">Welcome!</h2>
+                    <p>Please Scan your ID Before entering or leaving</p>
+                    <p class="text-red-700">You can only scan after 9 am and before 10pm</p>
+                </div>
+                <h2 class="my-24 text-2xl font-bold text-center absolute bg-teal-500/10 px-4 py-2 rounded-full top-8 right-6 hidden" id="message"></h2>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col-reverse sm:flex-row mt-4">
+        <div class="basis-1/2 px-6">
+            <div class="card bg-gray-100 rounded-md ">
                 <div class="p-6">
                     <h2 class="font-bold text-xl mb-6">Last Five Scan</h2>
-                    <table id="reportTable" class="display stripe text-xs sm:text-base" style="width:100%">
+                    <table id="reportTable" class="display stripe text-xs sm:text-base w-full" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Sl</th>
@@ -77,31 +91,10 @@
             </div>
         </div>
 
-        <div
-            class="basis-1/2 sm:flex sm:justify-center sm:items-center bg-dots-darker bg-center dark:bg-dots-lighter  selection:bg-red-500 selection:text-white ">
-
-
-            <div class="p-6 lg:p-8">
-
-
-                <div class="p-6 flex justify-center items-center mx-auto max-w-2xl">
-
-
-                    <div class=" motion-safe:hover:scale-[1.01] transition-all duration-250">
-                        <div class="my-10 text-center space-y-5">
-                            <h2 class="text-5xl font-bold text-red-700 ">Welcome!</h2>
-                            <p>Please Scan your ID Before entering or leaving</p>
-                            <p class="text-red-700">You can only scan after 9 am and before 10pm</p>
-                        </div>
-                        <h2 class="mt-6 text-xl font-bold text-red-700 text-center min-h-18">Scan Your ID Card</h2>
-                        <h2 class="my-24 text-2xl font-bold text-center absolute bg-teal-500/10 px-4 py-2 rounded-full top-8 right-6 hidden"
-                            id="message"></h2>
-
-                    </div>
-                </div>
-
-
-                <div class="mt-2 0opacity-0">
+        <div class="basis-1/2 bg-dots-darker bg-center dark:bg-dots-lighter  selection:bg-red-500 selection:text-white ">
+            <div class="card bg-gray-100 rounded-md px-6 lg:px-8">
+                {{-- form and camera --}}
+                <div class="p-6 opacity-0">
                     <div class="flex justify-center items-center mx-auto max-w-2xl px-6 pb-6">
                         <form action="{{ route('attendences.store') }}" method="post" id="idCardScanForm"
                             enctype="multipart/form-data">
@@ -111,7 +104,8 @@
                                 <div id="results"></div>
                             </div>
                             <br>
-                            <input type="text" name="emp_number" id="emp_number_input" class="w-full" autofocus>
+                            <label for="">Scan Your ID Card</label>
+                            <input type="text" name="emp_number" id="emp_number_input" class="w-full mt-2" autofocus>
                             {{-- <input type="file" name="image" id="imageTag" class=" image-tag"> --}}
                             <input type="hidden" id="image-tag" name="image">
                             <div class="lg:col-span-2 mt-3 hidden">
@@ -122,8 +116,6 @@
                         </form>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>

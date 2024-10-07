@@ -15,7 +15,8 @@
         <div class="card">
             <div class="p-6">
                 <form action="" method="get" id="dailyreport">
-                    <input type="date" name="targatedDay" id="targatedDay" value="{{ $targatedDate }}" class="dark:text-gray-950">
+                    <input type="date" name="targatedDay" id="targatedDay" value="{{ $targatedDate }}"
+                        class="dark:text-gray-950">
                 </form>
             </div>
         </div>
@@ -51,10 +52,10 @@
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script> --}}
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 var datatablelist = null;
 
-                $('#targatedDay').on('change', function () {
+                $('#targatedDay').on('change', function() {
                     datatablelist.draw();
                 });
 
@@ -67,7 +68,7 @@
 
                     ajax: {
                         url: "{!! route('reports.daily') !!}",
-                        data: function (d) {
+                        data: function(d) {
                             d.targatedDay = $('#targatedDay').val();
                         },
                         beforeSend: function() {
@@ -82,8 +83,12 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: null,
+                            render: function(data) {
+                                var employeename =
+                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
+                                return employeename;
+                            }
                         },
                         {
                             data: 'emp_id',
@@ -92,7 +97,7 @@
                         {
                             data: null,
                             render: function(data) {
-                                return data.wh+' hr';
+                                return data.wh + ' hr';
                             }
                         },
                         {
@@ -107,9 +112,6 @@
                 });
 
             });
-
         </script>
     </x-slot>
 </x-app-layout>
-
-

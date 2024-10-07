@@ -16,7 +16,7 @@
             <div class="p-6">
                 <div class="">
                     <h2 class="font-bold text-xl font-space">This Week</h2>
-                    <p>{{'( '.$startOfThisWeek->format('d-M-y').' to '.$endOfThisWeek->format('d-M-y').' )'}}</p>
+                    <p>{{ '( ' . $startOfThisWeek->format('d-M-y') . ' to ' . $endOfThisWeek->format('d-M-y') . ' )' }}</p>
                 </div>
                 <table id="thisweekreportTable" class="display stripe text-xs sm:text-base" style="width:100%">
                     <thead>
@@ -25,7 +25,7 @@
                             <th>Name</th>
                             <th>ID</th>
                             <th>Working Hour</th>
-                            <th>Should worked</th>
+                            <th>Target</th>
                             <th>Worked</th>
                         </tr>
                     </thead>
@@ -37,7 +37,7 @@
             <div class="p-6">
                 <div class="">
                     <h2 class="font-bold text-xl font-space">Last Week</h2>
-                    <p>{{'( '.$startOfLastWeek->format('d-M-y').' to '.$endOfLastWeek->format('d-M-y').' )'}}</p>
+                    <p>{{ '( ' . $startOfLastWeek->format('d-M-y') . ' to ' . $endOfLastWeek->format('d-M-y') . ' )' }}</p>
                 </div>
                 <table id="lastweekreportTable" class="display stripe text-xs sm:text-base" style="width:100%">
                     <thead>
@@ -46,7 +46,7 @@
                             <th>Name</th>
                             <th>ID</th>
                             <th>Working Hour</th>
-                            <th>Should worked</th>
+                            <th>Target</th>
                             <th>Worked</th>
                         </tr>
                     </thead>
@@ -68,7 +68,7 @@
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script> --}}
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 var thisweek = $('#thisweekreportTable').DataTable({
                     dom: 'Bfrtip',
                     processing: true,
@@ -84,8 +84,12 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: null,
+                            render: function(data) {
+                                var employeename =
+                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
+                                return employeename;
+                            }
                         },
                         {
                             data: 'emp_id',
@@ -94,18 +98,12 @@
                         {
                             data: null,
                             render: function(data) {
-                                return data.wh+' hr';
+                                return data.wh + ' hr';
                             }
                         },
                         {
-                            data: null,
-                            render: function (data) {
-                                const weekendString = data.we;
-                                const cleanedString = weekendString.replace(/[\[\]"]/g, '');
-                                const weekendArray = cleanedString.split(',');
-                                const numberOfElements = weekendArray.length;
-                                return data.wh*numberOfElements+' hr';
-                            }
+                            data: 'target',
+                            name: 'target'
                         },
                         {
                             data: 'total_wh_time',
@@ -130,8 +128,12 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: null,
+                            render: function(data) {
+                                var employeename =
+                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
+                                return employeename;
+                            }
                         },
                         {
                             data: 'emp_id',
@@ -142,14 +144,8 @@
                             name: 'wh'
                         },
                         {
-                            data: null,
-                            render: function (data) {
-                                const weekendString = data.we;
-                                const cleanedString = weekendString.replace(/[\[\]"]/g, '');
-                                const weekendArray = cleanedString.split(',');
-                                const numberOfElements = weekendArray.length;
-                                return data.wh*numberOfElements+' hr';
-                            }
+                            data: 'target',
+                            name: 'target'
                         },
                         {
                             data: 'total_wh_time',
@@ -159,9 +155,6 @@
                 });
 
             });
-
         </script>
     </x-slot>
 </x-app-layout>
-
-

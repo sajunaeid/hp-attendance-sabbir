@@ -79,58 +79,29 @@ class EmployeeController extends Controller
     public function store(StoreEmployeeRequest $request)
     {
 
-        // return $request;
-
         $employee = new Employee;
-        if ($request->has('name')) {
-            $employee->name = $request->name;
-        }
+        $employee->name = $request->name;
+        $employee->emp_id = $request->emp_id;
+        $employee->emp_number = $request->emp_number; // Note: Fixed typo from 'emp_nuber'
+        $employee->wh = (string)$request->whours . ':' . (string)$request->wminutes;
+        $employee->we = json_encode($request->we);
 
-        if ($request->has('phone')) {
+
+        if ($request->phone) {
             $employee->phone = $request->phone;
         }
-
-        if ($request->has('nid')) {
+        if ($request->nid) {
             $employee->nid = $request->nid;
         }
-
-        if ($request->emp_id) {
-            $employee->emp_id = $request->emp_id;
-        }
-
-        if ($request->emp_number) {
-            $employee->emp_number = $request->emp_number; // Note: Fixed typo from 'emp_nuber'
-        }
-
-        if ($request->wh) {
-            $employee->wh = $request->wh;
-        }
-
         if ($request->score) {
             $employee->score = $request->score;
-        }else{
-            $employee->score = 0;
         }
-
-        if ($request->has('score_note')) {
+        if ($request->score_note) {
             $employee->score_note = $request->score_note;
         }
 
-        if ($request->has('we')) {
-            $employee->we = json_encode($request->we);
-        }
         $employee->save();
-        // $employee = Employee::create([
-        //     'name' => $request->name,
-        //     'phone' => $request->phone,
-        //     'nid' => $request->nid,
-        //     'emp_id' => $request->emp_id,
-        //     'emp_number' => $request->emp_number,
-        //     'wh' => $request->wh,
-        //     'score' => $request->score,
-        //     'score_note' => $request->score_note,
-        //     'we' => json_encode($request->we),
-        // ]);
+
 
         return redirect()->route('employees.index')->with(['status' => 200, 'message' => 'Employee Created!']);
 
@@ -159,7 +130,22 @@ class EmployeeController extends Controller
     public function edit($id): View
     {
         $employee = Employee::find($id);
-        return view('employees.edit',compact('employee'));
+
+
+        // dd($employee->wh);
+        if ($employee && $employee->wh && strpos($employee->wh, ':') !== false) {
+            // Split the wh value (e.g., "11:20") into hours and minutes
+            list($hours, $minutes) = explode(':', $employee->wh);
+            $hours = (int) $hours;
+            $minutes = (int) $minutes;
+        } else {
+            $hours = NULL; // Or 0 if you prefer
+            $minutes = NULL; // Or 0 if you prefer
+        }
+
+
+        // Pass $hours and $minutes to the view
+        return view('employees.edit', compact('employee', 'hours', 'minutes'));
     }
 
 
@@ -176,17 +162,28 @@ class EmployeeController extends Controller
     public function update(UpdateEmployeeRequest $request, $id)
     {
 
+        // dd($request);
 
         $employee = Employee::find($id);
         $employee->name = $request->name;
-        $employee->phone = $request->phone;
-        $employee->nid = $request->nid;
         $employee->emp_id = $request->emp_id;
-        $employee->emp_number = $request->emp_number;
-        $employee->wh = $request->wh;
-        $employee->score = $request->score;
-        $employee->score_note = $request->score_note;
+        $employee->emp_number = $request->emp_number; // Note: Fixed typo from 'emp_nuber'
+        $employee->wh = (string)$request->whours . ':' . (string)$request->wminutes;
         $employee->we = json_encode($request->we);
+
+
+        if ($request->phone) {
+            $employee->phone = $request->phone;
+        }
+        if ($request->nid) {
+            $employee->nid = $request->nid;
+        }
+        if ($request->score) {
+            $employee->score = $request->score;
+        }
+        if ($request->score_note) {
+            $employee->score_note = $request->score_note;
+        }
 
         // Photo
         if ($request->file('pp')) {
@@ -216,13 +213,10 @@ class EmployeeController extends Controller
 
     public function old(Request $request)
     {
-
         if ($request->ajax()) {
             return DataTables::of(Employee::withTrashed()->where('deleted_at', '>', Carbon::now()->subWeek())->get())->make(true);
         }
         return view('employees.old');
-
-
     }
 
 

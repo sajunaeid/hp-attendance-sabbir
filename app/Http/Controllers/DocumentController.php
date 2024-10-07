@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 
@@ -80,8 +81,22 @@ class DocumentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Document $document)
+    public function destroy(Request $request, Document $document)
     {
-        return 'Hello';
+        // return $request;
+        // employeeID
+
+        // Deleting profile picture
+        $filePath = public_path($document->docpath);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $document->delete();
+
+        // return response()->json(['success' => 'Employee deleted Permanently!']);
+
+        return redirect()->route('employees.show',$request->employeeID);
     }
+
 }

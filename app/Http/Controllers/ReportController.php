@@ -56,10 +56,16 @@ class ReportController extends Controller
                     $carbonDate = Carbon::parse($targatedDate);
                     $dayOfWeek = $carbonDate->format('l');
                     $weekends = json_decode($employee->we);
+
                     if ($employee->we && in_array($dayOfWeek,$weekends)) {
                         return "Weekend";
+                    }else{
+                        list($hours, $minutes) = explode(':', $employee->wh);
+                        $hours = (int) $hours;
+                        $minutes = (int) $minutes;
+                        return $hours.' hr '.$minutes.' min';
                     }
-                    return $employee->wh." hr";
+
                 })
                 ->rawColumns(['total_wh_time','target'])
                 ->make(true);
@@ -178,19 +184,22 @@ class ReportController extends Controller
         if ($request->ajax()) {
 
             return DataTables::of(Employee::query())
-            ->addColumn('total_wh_time', function ($employee) use ($startOfThisWeek,$endOfThisWeek) {
+            ->addColumn('total_wh_time', function ($employee) use ($startOfThisWeek, $endOfThisWeek) {
                 $totalWorkedSeconds = $employee->hours()
-                ->whereBetween('created_at',  [$startOfThisWeek, $endOfThisWeek])
+                    ->whereBetween('created_at', [$startOfThisWeek, $endOfThisWeek])
                     ->get()
                     ->reduce(function ($total, $hour) {
                         // Assuming `wh_time` is stored as "HH:MM:SS"
-                        list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
-                        $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
-                        return $total + $secondsFromTime;
+                        if ($hour->wh_time) {
+                            list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                            $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                            return $total + $secondsFromTime;
+                        }
+                        return $total;
                     }, 0);
 
                 if ($totalWorkedSeconds == 0) {
-                    return '00 min';
+                    return '00 hr 00 min';
                 }
 
                 // Convert total seconds to HH:MM:SS format
@@ -198,9 +207,44 @@ class ReportController extends Controller
                 $minutes = floor(($totalWorkedSeconds % 3600) / 60);
                 $seconds = $totalWorkedSeconds % 60;
 
-                return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
+                return sprintf('%02d hr %02d min', $hours, $minutes);
+            })->addColumn('target', function ($employee) use ($startOfThisWeek, $endOfThisWeek) {
+                $weekends = json_decode($employee->we);
+                $totalSeconds = 0;
+
+                // Parse the employee's creation date
+                $employeeCreatedAt = Carbon::parse($employee->created_at);
+
+                // Determine the start date for the calculation
+                $calculationStartDate = $employeeCreatedAt->greaterThan(Carbon::parse($startOfThisWeek))
+                                        ? $employeeCreatedAt
+                                        : Carbon::parse($startOfThisWeek);
+
+                // Loop through each day of the week from the calculated start date to the end of the week
+                $currentDate = $calculationStartDate;
+                while ($currentDate->lte(Carbon::parse($endOfThisWeek))) {
+                    $dayOfWeek = $currentDate->format('l');
+
+                    // If the day is not a weekend for the employee, add the work hours
+                    if (!in_array($dayOfWeek, $weekends)) {
+                        if ($employee->wh) {
+                            list($hours, $minutes) = explode(':', $employee->wh);
+                            $secondsFromTime = ($hours * 3600) + ($minutes * 60);
+                            $totalSeconds += $secondsFromTime;
+                        }
+                    }
+
+                    // Move to the next day
+                    $currentDate->addDay();
+                }
+
+                // Convert total seconds to hours and minutes
+                $hours = floor($totalSeconds / 3600);
+                $minutes = floor(($totalSeconds % 3600) / 60);
+
+                return sprintf('%02d hr %02d min', $hours, $minutes);
             })
-            ->rawColumns(['total_wh_time'])
+            ->rawColumns(['total_wh_time','target'])
             ->make(true);
         }
 
@@ -216,29 +260,67 @@ class ReportController extends Controller
         if ($request->ajax()) {
 
             return DataTables::of(Employee::query())
-            ->addColumn('total_wh_time', function ($employee) use ($startOfLastWeek,$endOfLastWeek) {
+            ->addColumn('total_wh_time', function ($employee) use ($startOfLastWeek, $endOfLastWeek) {
                 $totalWorkedSeconds = $employee->hours()
-                ->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])
+                    ->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])
                     ->get()
                     ->reduce(function ($total, $hour) {
-                        // Assuming `wh_time` is stored as "HH:MM:SS"
-                        list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
-                        $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
-                        return $total + $secondsFromTime;
+                        // Check if `wh_time` is set and has the correct format
+                        if ($hour->wh_time) {
+                            list($hours, $minutes, $seconds) = explode(':', $hour->wh_time);
+                            $secondsFromTime = ($hours * 3600) + ($minutes * 60) + $seconds;
+                            return $total + $secondsFromTime;
+                        }
+                        return $total;
                     }, 0);
 
                 if ($totalWorkedSeconds == 0) {
-                    return '00 min';
+                    return '00 hr 00 min';
                 }
 
-                // Convert total seconds to HH:MM:SS format
+                // Convert total seconds to hours and minutes
                 $hours = floor($totalWorkedSeconds / 3600);
                 $minutes = floor(($totalWorkedSeconds % 3600) / 60);
-                $seconds = $totalWorkedSeconds % 60;
+                // The variable $seconds is not used in the return statement
 
-                return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
+                return sprintf('%02d hr %02d min', $hours, $minutes);
+            })->addColumn('target', function ($employee) use ($startOfLastWeek, $endOfLastWeek) {
+                $weekends = json_decode($employee->we);
+                $totalSeconds = 0;
+
+                // Parse the employee's creation date
+                $employeeCreatedAt = Carbon::parse($employee->created_at);
+
+                // Determine the start date for the calculation
+                $calculationStartDate = $employeeCreatedAt->greaterThan(Carbon::parse($startOfLastWeek))
+                                        ? $employeeCreatedAt
+                                        : Carbon::parse($startOfLastWeek);
+
+                // Loop through each day of the week from the calculated start date to the end of the week
+                $currentDate = $calculationStartDate;
+                while ($currentDate->lte(Carbon::parse($endOfLastWeek))) {
+                    $dayOfWeek = $currentDate->format('l');
+
+                    // If the day is not a weekend for the employee, add the work hours
+                    if (!in_array($dayOfWeek, $weekends)) {
+                        if ($employee->wh) {
+                            list($hours, $minutes) = explode(':', $employee->wh);
+                            $secondsFromTime = ($hours * 3600) + ($minutes * 60);
+                            $totalSeconds += $secondsFromTime;
+                        }
+                    }
+
+                    // Move to the next day
+                    $currentDate->addDay();
+                }
+
+                // Convert total seconds to hours and minutes
+                $hours = floor($totalSeconds / 3600);
+                $minutes = floor(($totalSeconds % 3600) / 60);
+
+                return sprintf('%02d hr %02d min', $hours, $minutes);
             })
-            ->rawColumns(['total_wh_time'])
+            ->rawColumns(['total_wh_time','target'])
             ->make(true);
         }
 
@@ -280,8 +362,159 @@ class ReportController extends Controller
                 $seconds = $totalWorkedSeconds % 60;
 
                 return sprintf('%02d hr %02d min', $hours, $minutes, $seconds);
+            })->addColumn('target', function ($employee) use ($targatedMonth) {
+
+                // Get the current date and month
+                $currentDate = Carbon::now();
+                $currentMonth = $currentDate->month;
+
+                // Determine the start and end dates based on the targeted month
+                if ($targatedMonth == $currentMonth) {
+                    // Targeted month is this month
+                    $startOfMonth = Carbon::now()->startOfMonth();
+                    $endOfMonth = Carbon::now(); // Today
+                } else {
+                    // Targeted month is not this month
+                    $startOfMonth = Carbon::create($currentDate->year, $targatedMonth, 1)->startOfDay();
+                    $endOfMonth = Carbon::create($currentDate->year, $targatedMonth, Carbon::create($currentDate->year, $targatedMonth)->daysInMonth)->endOfDay();
+                }
+
+                // Adjust the start date if created_at is in the targeted month
+                $createdAt = Carbon::parse($employee->created_at);
+                if ($createdAt->month == $targatedMonth && $createdAt->year == $currentDate->year) {
+                    $startOfMonth = $createdAt;
+                }
+
+                // Get all the working days in the date range
+                $workingDays = [];
+                for ($date = $startOfMonth->copy(); $date->lessThanOrEqualTo($endOfMonth); $date->addDay()) {
+                    // Check if the current date is a weekday and not a weekend
+                    if (!in_array($date->format('l'), json_decode($employee->we))) {
+                        $workingDays[] = $date->copy(); // Store the working day
+                    }
+                }
+
+                // Calculate the total working hours
+                list($hours, $minutes) = explode(':', $employee->wh);
+                $totalHours = (int) $hours;
+                $totalMinutes = (int) $minutes;
+
+                // Calculate total working time based on working days
+                $totalWorkingTime = count($workingDays) * ($totalHours * 60 + $totalMinutes); // Total minutes
+
+                // Convert total minutes back to hours and minutes
+                $finalHours = floor($totalWorkingTime / 60);
+                $finalMinutes = $totalWorkingTime % 60;
+
+                return sprintf("%d hr %d min", $finalHours, $finalMinutes);
+
+            })->addColumn('presentDays', function ($employee) use ($targatedMonth) {
+                $currentDate = Carbon::now();
+                $currentMonth = $currentDate->month;
+
+                // Determine the start and end dates
+                if ($targatedMonth == $currentMonth) {
+                    $startOfMonth = Carbon::now()->startOfMonth();
+                    $endOfMonth = Carbon::now(); // Today
+                } else {
+                    $startOfMonth = Carbon::create($currentDate->year, $targatedMonth, 1)->startOfDay();
+                    $endOfMonth = Carbon::create($currentDate->year, $targatedMonth, Carbon::create($currentDate->year, $targatedMonth)->daysInMonth)->endOfDay();
+                }
+
+                // Adjust the start date if created_at is in the targeted month
+                $createdAt = Carbon::parse($employee->created_at);
+                if ($createdAt->month == $targatedMonth && $createdAt->year == $currentDate->year) {
+                    $startOfMonth = $createdAt;
+                }
+
+                $presentDays = 0;
+                $weekends = json_decode($employee->we) ?? [];
+
+                // Iterate over each day in the range
+                for ($date = $startOfMonth->copy(); $date->lessThanOrEqualTo($endOfMonth); $date->addDay()) {
+                    if (in_array($date->format('l'), $weekends)) {
+                        continue; // Skip weekends
+                    }
+
+                    $attendance = Attendance::where('employee_id', $employee->id)
+                        ->whereDate('created_at', $date)
+                        ->first();
+
+                    if ($attendance) {
+                        $presentDays++; // Count present days
+                    }
+                }
+                return $presentDays;
+            })->addColumn('absentDays', function ($employee) use ($targatedMonth) {
+                $currentDate = Carbon::now();
+                $currentMonth = $currentDate->month;
+
+                // Determine the start and end dates
+                if ($targatedMonth == $currentMonth) {
+                    $startOfMonth = Carbon::now()->startOfMonth();
+                    $endOfMonth = Carbon::now(); // Today
+                } else {
+                    $startOfMonth = Carbon::create($currentDate->year, $targatedMonth, 1)->startOfDay();
+                    $endOfMonth = Carbon::create($currentDate->year, $targatedMonth, Carbon::create($currentDate->year, $targatedMonth)->daysInMonth)->endOfDay();
+                }
+
+                // Adjust the start date if created_at is in the targeted month
+                $createdAt = Carbon::parse($employee->created_at);
+                if ($createdAt->month == $targatedMonth && $createdAt->year == $currentDate->year) {
+                    $startOfMonth = $createdAt;
+                }
+
+                $absentDays = 0;
+                $weekends = json_decode($employee->we) ?? [];
+
+                // Iterate over each day in the range
+                for ($date = $startOfMonth->copy(); $date->lessThanOrEqualTo($endOfMonth); $date->addDay()) {
+                    if (in_array($date->format('l'), $weekends)) {
+                        continue; // Skip weekends
+                    }
+
+                    $attendance = Attendance::where('employee_id', $employee->id)
+                        ->whereDate('created_at', $date)
+                        ->first();
+
+                    if (!$attendance) {
+                        $absentDays++; // Count absent days
+                    }
+                }
+
+                return $absentDays;
+            })->addColumn('totalWeekends', function ($employee) use ($targatedMonth) {
+                $currentDate = Carbon::now();
+                $currentMonth = $currentDate->month;
+
+                // Determine the start and end dates
+                if ($targatedMonth == $currentMonth) {
+                    $startOfMonth = Carbon::now()->startOfMonth();
+                    $endOfMonth = Carbon::now(); // Today
+                } else {
+                    $startOfMonth = Carbon::create($currentDate->year, $targatedMonth, 1)->startOfDay();
+                    $endOfMonth = Carbon::create($currentDate->year, $targatedMonth, Carbon::create($currentDate->year, $targatedMonth)->daysInMonth)->endOfDay();
+                }
+
+                // Adjust the start date if created_at is in the targeted month
+                $createdAt = Carbon::parse($employee->created_at);
+                if ($createdAt->month == $targatedMonth && $createdAt->year == $currentDate->year) {
+                    $startOfMonth = $createdAt;
+                }
+
+                $totalWeekends = 0;
+                $weekends = json_decode($employee->we) ?? [];
+
+                // Iterate over each day in the range
+                for ($date = $startOfMonth->copy(); $date->lessThanOrEqualTo($endOfMonth); $date->addDay()) {
+                    if (in_array($date->format('l'), $weekends)) {
+                        $totalWeekends++; // Count weekends
+                    }
+                }
+
+                return $totalWeekends;
             })
-            ->rawColumns(['total_wh_time'])
+            ->rawColumns(['total_wh_time','target','presentDays','absentDays','totalWeekends'])
             ->make(true);
         }
 

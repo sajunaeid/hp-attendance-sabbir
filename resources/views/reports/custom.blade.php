@@ -17,10 +17,12 @@
                 <form action="" method="get" id="customReport">
                     <div class="flex justify-start items-center gap-3">
 
-                        <input type="date" name="startDate" id="startDate" value="{{ $startOfThisWeek->format('Y-m-d') }}" class="dark:text-gray-950">
-                        <input type="date" name="endDate" id="endDate" value="{{ $endOfThisWeek->format('Y-m-d') }}" class="dark:text-gray-950">
+                        <input type="date" name="startDate" id="startDate"
+                            value="{{ $startOfThisWeek->format('Y-m-d') }}" class="dark:text-gray-950">
+                        <input type="date" name="endDate" id="endDate"
+                            value="{{ $endOfThisWeek->format('Y-m-d') }}" class="dark:text-gray-950">
                         <button type="submit"
-                                    class="font-mont px-10 py-3 bg-black text-white font-semibold text-xs uppercase tracking-widest transition ease-in-out duration-150 relative after:absolute after:content-['SURE!'] after:flex after:justify-center after:items-center after:text-white after:w-full after:h-full after:z-10 after:top-full after:left-0 after:bg-seagreen overflow-hidden hover:after:top-0 after:transition-all after:duration-300">Filter</button>
+                            class="font-mont px-10 py-3 bg-black text-white font-semibold text-xs uppercase tracking-widest transition ease-in-out duration-150 relative after:absolute after:content-['SURE!'] after:flex after:justify-center after:items-center after:text-white after:w-full after:h-full after:z-10 after:top-full after:left-0 after:bg-seagreen overflow-hidden hover:after:top-0 after:transition-all after:duration-300">Filter</button>
                     </div>
                 </form>
             </div>
@@ -57,21 +59,20 @@
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script> --}}
         <script>
-
             var rangeFilter = null;
-            $('form#customReport').submit(function (e) {
+            $('form#customReport').submit(function(e) {
                 e.preventDefault();
                 rangeFilter.draw();
             });
 
-            $(document).ready(function () {
+            $(document).ready(function() {
                 rangeFilter = $('#thisweekreportTable').DataTable({
                     dom: 'Bfrtip',
                     processing: true,
                     serverSide: true,
                     ajax: {
                         url: "{!! route('reports.range') !!}",
-                        data: function (d) {
+                        data: function(d) {
                             d.startDate = $('#startDate').val();
                             d.endDate = $('#endDate').val();
                         },
@@ -87,8 +88,12 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: null,
+                            render: function(data) {
+                                var employeename =
+                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
+                                return employeename;
+                            }
                         },
                         {
                             data: 'emp_id',
@@ -97,7 +102,7 @@
                         {
                             data: null,
                             render: function(data) {
-                                return data.wh+' hr';
+                                return data.wh + ' hr';
                             }
                         },
                         {
@@ -121,8 +126,12 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: null,
+                            render: function(data) {
+                                var employeename =
+                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
+                                return employeename;
+                            }
                         },
                         {
                             data: 'emp_id',
@@ -140,9 +149,6 @@
                 });
 
             });
-
         </script>
     </x-slot>
 </x-app-layout>
-
-

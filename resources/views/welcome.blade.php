@@ -99,9 +99,9 @@
                         <form action="{{ route('attendences.store') }}" method="post" id="idCardScanForm"
                             enctype="multipart/form-data">
                             @csrf
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="flex justify-center items-center">
                                 <div id="my_camera"></div>
-                                <div id="results"></div>
+                                {{-- <div id="results"></div> --}}
                             </div>
                             <br>
                             <label for="">Scan Your ID Card</label>
@@ -303,8 +303,7 @@
 
                 Webcam.snap(function(data_uri) {
                     document.getElementById("image-tag").value = data_uri;
-                    document.getElementById('results').innerHTML = '<img src="' + data_uri +
-                        '"/>';
+                    // document.getElementById('results').innerHTML = '<img src="' + data_uri +'"/>';
                 });
 
 

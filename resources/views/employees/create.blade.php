@@ -49,8 +49,11 @@
                         <div class="flex gap-4">
 
                             <div>
-                                <label for="wh" class="block mb-2">Working Hour</label>
-                                <input type="number" class="form-input" id="wh" name="wh" required step="1">
+                                <label  class="block mb-2">Working Hour</label>
+                                <div class="flex gap-4">
+                                    <input type="number" class="form-input" id="whours" name="whours" required step="1" min="1" max="23" value="8">
+                                    <input type="number" class="form-input" id="wminutes" name="wminutes" required step="10" min="00" max="50" value="0">
+                                </div>
                             </div> <!-- end -->
 
 

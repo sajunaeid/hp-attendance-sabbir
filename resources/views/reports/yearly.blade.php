@@ -22,7 +22,8 @@
                         @endphp
 
                         @for ($year = $startYear; $year <= $endYear; $year++)
-                            <option value="{{ $year }}" @if($year == date('Y')) selected @endif>{{ $year }}</option>
+                            <option value="{{ $year }}" @if ($year == date('Y')) selected @endif>
+                                {{ $year }}</option>
                         @endfor
                     </select>
                 </form>
@@ -39,6 +40,7 @@
                             <th>ID</th>
                             <th>Working Hour</th>
                             <th>Worked</th>
+                            <th>Target</th>
                         </tr>
                     </thead>
                 </table>
@@ -59,10 +61,10 @@
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script> --}}
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 var datatablelist = null;
 
-                $('#targatedYear').on('change', function () {
+                $('#targatedYear').on('change', function() {
                     datatablelist.draw();
                 });
 
@@ -75,7 +77,7 @@
 
                     ajax: {
                         url: "{!! route('reports.yearly') !!}",
-                        data: function (d) {
+                        data: function(d) {
                             d.targatedYear = $('#targatedYear').val();
                         },
                         beforeSend: function() {
@@ -90,8 +92,12 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: null,
+                            render: function(data) {
+                                var employeename =
+                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
+                                return employeename;
+                            }
                         },
                         {
                             data: 'emp_id',
@@ -100,20 +106,21 @@
                         {
                             data: null,
                             render: function(data) {
-                                return data.wh+' hr';
+                                return data.wh + ' hr';
                             }
                         },
                         {
                             data: 'total_wh_time',
                             name: 'total_wh_time'
+                        },
+                        {
+                            data: 'target',
+                            name: 'target'
                         }
                     ]
                 });
 
             });
-
         </script>
     </x-slot>
 </x-app-layout>
-
-

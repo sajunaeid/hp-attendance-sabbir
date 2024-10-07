@@ -16,18 +16,18 @@
             <div class="p-6">
                 <form action="" method="get" id="dailyreport">
                     <select id="targatedMonth" name="targatedMonth" class="dark:text-gray-950">
-                        <option value="01" @if($thisMonth == '01') selected @endif >January</option>
-                        <option value="02" @if ($thisMonth == '02') selected @endif >February</option>
-                        <option value="03" @if ($thisMonth == '03') selected @endif >March</option>
-                        <option value="04" @if ($thisMonth == '04') selected @endif >April</option>
-                        <option value="05" @if ($thisMonth == '05') selected @endif >May</option>
-                        <option value="06" @if ($thisMonth == '06') selected @endif >June</option>
-                        <option value="07" @if ($thisMonth == '07') selected @endif >July</option>
-                        <option value="08" @if ($thisMonth == '08') selected @endif >August</option>
-                        <option value="09" @if ($thisMonth == '09') selected @endif >September</option>
-                        <option value="10" @if ($thisMonth == '10') selected @endif >October</option>
-                        <option value="11" @if ($thisMonth == '11') selected @endif >November</option>
-                        <option value="12" @if ($thisMonth == '12') selected @endif >December</option>
+                        <option value="01" @if ($thisMonth == '01') selected @endif>January</option>
+                        <option value="02" @if ($thisMonth == '02') selected @endif>February</option>
+                        <option value="03" @if ($thisMonth == '03') selected @endif>March</option>
+                        <option value="04" @if ($thisMonth == '04') selected @endif>April</option>
+                        <option value="05" @if ($thisMonth == '05') selected @endif>May</option>
+                        <option value="06" @if ($thisMonth == '06') selected @endif>June</option>
+                        <option value="07" @if ($thisMonth == '07') selected @endif>July</option>
+                        <option value="08" @if ($thisMonth == '08') selected @endif>August</option>
+                        <option value="09" @if ($thisMonth == '09') selected @endif>September</option>
+                        <option value="10" @if ($thisMonth == '10') selected @endif>October</option>
+                        <option value="11" @if ($thisMonth == '11') selected @endif>November</option>
+                        <option value="12" @if ($thisMonth == '12') selected @endif>December</option>
                     </select>
                 </form>
             </div>
@@ -40,46 +40,55 @@
                         <tr>
                             <th>Sl</th>
                             <th>Name</th>
-                            <th>ID</th>
                             <th>Working Hour</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Weekend</th>
+                            <th>Target</th>
                             <th>Worked</th>
                         </tr>
                     </thead>
                 </table>
             </div>
         </div>
-
-
     </div>
 
 
     <x-slot name="script">
         <!-- Datatable script-->
         <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-        {{-- <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script> --}}
+        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
+
+
                 var datatablelist = null;
 
-                $('#targatedMonth').on('change', function () {
+                $('#targatedMonth').on('change', function() {
                     datatablelist.draw();
                 });
 
 
 
                 datatablelist = $('#reportTable').DataTable({
+
                     dom: 'Bfrtip',
+                    layout: {
+                        topStart: {
+                            buttons: 'pdfHtml5',
+                        }
+                    },
                     processing: true,
                     serverSide: true,
 
                     ajax: {
                         url: "{!! route('reports.monthly') !!}",
-                        data: function (d) {
+                        data: function(d) {
                             d.targatedMonth = $('#targatedMonth').val();
                         },
                         beforeSend: function() {
@@ -94,18 +103,34 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
-                        },
-                        {
-                            data: 'emp_id',
-                            name: 'emp_id'
+                            data: null,
+                            render: function(data) {
+                                var employeename =
+                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
+                                return employeename;
+                            }
                         },
                         {
                             data: null,
                             render: function(data) {
-                                return data.wh+' hr';
+                                return data.wh + ' hr';
                             }
+                        },
+                        {
+                            data: 'presentDays',
+                            name: 'presentDays'
+                        },
+                        {
+                            data: 'absentDays',
+                            name: 'absentDays'
+                        },
+                        {
+                            data: 'totalWeekends',
+                            name: 'totalWeekends'
+                        },
+                        {
+                            data: 'target',
+                            name: 'target'
                         },
                         {
                             data: 'total_wh_time',
@@ -114,10 +139,9 @@
                     ]
                 });
 
-            });
+                $(".dt-buttons .dt-button").addClass("font-mont px-4 py-2 bg-black text-white font-semibold text-xs uppercase tracking-widest transition ease-in-out duration-150 hover:bg-seagreen");
 
+            });
         </script>
     </x-slot>
 </x-app-layout>
-
-

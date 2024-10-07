@@ -114,7 +114,7 @@
         <script src="{{asset('adminto/libs/jquery-knob/jquery.knob.min.js')}}"></script>
 
         <!--Morris Chart-->
-        <script src="{{asset('adminto/libs/morris.js06/morris.min.js')}}"></script>
+        {{-- <script src="{{asset('adminto/libs/morris.js06/morris.min.js')}}"></script> --}}
         <script src="{{asset('adminto/libs/raphael/raphael.min.js')}}"></script>
 
         <!-- Dashboard App js -->

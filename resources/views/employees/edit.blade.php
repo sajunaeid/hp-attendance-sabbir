@@ -20,7 +20,7 @@
                         @csrf
                         @method('PATCH')
                         <div class="col-span-2 flex items-end gap-5">
-                            <img src="{{$employee->pp ? asset($employee->pp) :'https://picsum.photos/200'}}" alt="" srcset="">
+                            <div class="p-1 w-36 h-36 bg-no-repeat bg-cover bg-center border border-white relative shadow-md" style="background-image: url({{$employee->pp ? asset($employee->pp) :'https://picsum.photos/200'}})"></div>
                             <div class="">
                                 <label for="pp" class="block mb-2">Profile Picture</label>
                                 <input type="file" name="pp" id="pp"  class="form-input">
@@ -35,12 +35,12 @@
 
                         <div>
                             <label for="phone" class="block mb-2">Phone</label>
-                            <input type="text" class="form-input" id="phone" name="phone" required value="{{$employee->phone }}">
+                            <input type="text" class="form-input" id="phone" name="phone" value="{{$employee->phone }}">
                         </div> <!-- end -->
 
                         <div>
                             <label for="nid" class="block mb-2">NID</label>
-                            <input type="text" class="form-input" id="nid" name="nid" required value="{{$employee->nid }}">
+                            <input type="text" class="form-input" id="nid" name="nid" value="{{$employee->nid }}">
                         </div> <!-- end -->
 
                         <div>
@@ -56,9 +56,17 @@
 
                         <div class="flex gap-4">
 
-                            <div>
+                            {{-- <div>
                                 <label for="wh" class="block mb-2">Working Hour</label>
                                 <input type="number" class="form-input" id="wh" name="wh" required step="1" value="{{$employee->wh }}">
+                            </div> <!-- end --> --}}
+
+                            <div>
+                                <label  class="block mb-2">Working Hour</label>
+                                <div class="flex gap-4">
+                                    <input type="number" class="form-input" id="whours" name="whours" required step="1" min="1" max="23" value="{{ old('whours', $hours) }}">
+                                    <input type="number" class="form-input" id="wminutes" name="wminutes" required step="10" min="00" max="50" value="{{ old('wminutes', $minutes) }}">
+                                </div>
                             </div> <!-- end -->
 
 
@@ -81,12 +89,12 @@
 
                         <div>
                             <label for="score" class="block mb-2">Score</label>
-                            <input type="text" class="form-input" id="score" name="score" required value="{{$employee->score }}">
+                            <input type="text" class="form-input" id="score" name="score" value="{{$employee->score}}">
                         </div> <!-- end -->
 
                         <div>
                             <label for="score_note" class="block mb-2">Score Note</label>
-                            <textarea class="form-input" id="score_note" name="score_note" required rows="1">{{$employee->score_note }}</textarea>
+                            <textarea class="form-input" id="score_note" name="score_note" rows="1">{{$employee->score_note }}</textarea>
                         </div> <!-- end -->
 
 

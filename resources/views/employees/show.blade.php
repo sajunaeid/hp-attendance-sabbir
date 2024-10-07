@@ -16,7 +16,9 @@
                 <div class="flex justify-between items-end">
                     <div class="">
                         <div class="p-1 w-36 h-36 bg-no-repeat bg-cover bg-center border border-white relative shadow-md" style="background-image: url({{$employee->pp ? asset($employee->pp) :'https://picsum.photos/200'}})">
+                            @if ($employee->score)
                             <span class="text-seagreen bg-white rounded-full py-1 px-2 absolute -top-3 -right-4 shadow-md border border-seagreen">{{$employee->score}}</span>
+                            @endif
                         </div>
                         <h1 class="text-2xl font-semibold mt-4 capitalize">{{$employee->name}}</h1>
                     </div>
@@ -36,6 +38,7 @@
                         <p class="">NID: <span class="text-seagreen">{{$employee->nid ? $employee->nid :''}}</span></p>
                         <p class="">Employee ID: <span class="text-seagreen">{{$employee->emp_id ? $employee->emp_id :''}}</span></p>
                         <p class="">Employee Number: <span class="text-seagreen">{{$employee->emp_number ? $employee->emp_number :''}}</span></p>
+                        <p class="">Working Hour: <span class="text-seagreen">{{$employee->wh ? $employee->wh :''}}</span></p>
                         <p class="">Created At: <span class="text-seagreen">{{ date('d-M-Y', strtotime($employee->created_at)); }}</span></p>
                         <p class="">Last Updated At: <span class="text-seagreen">{{$employee->updated_at}}</span></p>
 
@@ -93,16 +96,19 @@
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="">{{$document->docname}}</h3>
                             <div class="flex gap-2">
+
                                 <div class="">
 
-                                    <form action="{{route('documents.destroy', $document)}}" method="DELETE">
+                                    <form action="{{route('documents.destroy', $document)}}" method="POST">
                                         @csrf
                                         @method('DELETE')
+                                        <input type="hidden" name="employeeID" value="{{$employee->id}}">
 
                                         <button type="submit"  class="text-red-500/70 hover:text-red  hover:scale-105 transition duration-150 ease-in-out text-xl bg-gray-100 rounded-md p-1 aspect-square flex justify-center items-center" >
                                             <span class="menu-icon"><i class="mdi mdi-delete"></i></span>
                                         </button>
                                     </form>
+
                                 </div>
 
 

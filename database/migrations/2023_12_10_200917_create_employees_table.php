@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('nid')->unique()->nullable();
             $table->string('emp_id')->unique()->nullable();
             $table->string('emp_number')->unique();
-            $table->integer('wh');
-            $table->integer('score')->default(0);
+            $table->string('wh');
+            $table->integer('score')->default(0)->nullable();
             $table->longText('score_note')->nullable();
             $table->timestamps();
         });

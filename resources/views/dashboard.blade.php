@@ -14,8 +14,8 @@
     <div class="relative">
 
 
-        <div class="flex gap-6">
-
+        <div class="flex flex-col sm:flex-row gap-6">
+            {{-- All present today --}}
             <div class="basis-1/2">
                 <div class="card">
                     <div class="p-6">

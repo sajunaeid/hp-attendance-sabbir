@@ -84,12 +84,8 @@
                             }
                         },
                         {
-                            data: null,
-                            render: function(data) {
-                                var employeename =
-                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
-                                return employeename;
-                            }
+                            data: 'name',
+                            name: 'name'
                         },
                         {
                             data: 'emp_id',
@@ -128,12 +124,8 @@
                             }
                         },
                         {
-                            data: null,
-                            render: function(data) {
-                                var employeename =
-                                    `<a  class="hover:text-green-500 cursor-pointer" href="${BASE_URL}employees/${data.id}">${data.name}</a>`;
-                                return employeename;
-                            }
+                            data: 'name',
+                            name: 'name'
                         },
                         {
                             data: 'emp_id',

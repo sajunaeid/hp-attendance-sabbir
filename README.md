@@ -1,3 +1,18 @@
+## Staff Attendance Software
+<br>
+Features: <br>
+    1. Staff can scan their ID cards and give attendance<br>
+    2. Staff's working hour is calculated and reports can be seen as needed<br>
+    3. For stopping fake ID card scans, webcam is added so each time a person scans, their image will be seen  <br>
+    4. Multiple users can be set with role management and permissions to operate the site  <br>
+<br>
+<hr>
+<br>
+This is made using PHP, MySQL, Laravel, Blade, etc.
+<br>
+<hr>
+<br>
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
